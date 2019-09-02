@@ -57,12 +57,12 @@
 
 
         /**
-         * Get the connection PDO
+         * Create the connection PDO
          *
          * @param  string|null $db_name  The name of the database
          * @return PDO
          */
-        public function getConnexion(?string $db_name = null) : PDO
+        public function getConnection(?string $db_name = null) : PDO
         {
             try {
                 if (!is_null($this->setPDO($db_name))) {
@@ -93,6 +93,18 @@
                 $this->db_name = $db_name;
                 $this->pdo = new PDO("mysql:host=" . $this->db_host . ";dbname=" . $this->db_name . ";", $this->db_user, $this->db_password , self::PDO_OPTIONS);
             }
+        }
+
+
+
+        /**
+         * Get the connection PDO
+         *
+         * @return PDO
+         */
+        public function getPDO () : PDO
+        {
+            return $this->pdo;
         }
     }
     

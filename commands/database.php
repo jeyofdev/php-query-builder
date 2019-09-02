@@ -16,7 +16,6 @@
     $postTable = "CREATE TABLE IF NOT EXISTS post (
         id INT UNSIGNED NOT NULL AUTO_INCREMENT,
         name VARCHAR(255) NOT NULL,
-        category int(11) NOT NULL,
         slug VARCHAR(255) NOT NULL,
         content TEXT(650000) NOT NULL,
         created_at DATETIME NOT NULL,
@@ -55,4 +54,7 @@
 
 
     // Add the tables in the database
-    $database->addTable($postTable)->addTable($categoryTable)->addTable($joinTable);
+    $database
+        ->addTable($postTable)
+        ->addTable($categoryTable)
+        ->addTable($joinTable);

@@ -13,5 +13,10 @@
         "phpunit/phpunit": "^8.3",
         "symfony/var-dumper": "^4.3",
         "filp/whoops": "^2.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "jeyofdev\\Php\\Query\\Builder\\": "src/"
+        }
     }
 }

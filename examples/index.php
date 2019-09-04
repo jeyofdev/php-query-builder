@@ -22,6 +22,7 @@
     $query = $queryBuilder->getSyntax()
         ->select()
         ->columns("id", "category", "content")
+        ->table("post")
         ->toSql();
 
     dd($query);

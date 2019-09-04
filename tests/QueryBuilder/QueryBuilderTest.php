@@ -4,6 +4,7 @@
 
 
     use jeyofdev\Php\Query\Builder\Database\Database;
+    use jeyofdev\Php\Query\Builder\Exception\SyntaxException;
     use jeyofdev\Php\Query\Builder\QueryBuilder\QueryBuilder;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Syntax\Syntax;
     use PHPUnit\Framework\TestCase;
@@ -47,8 +48,10 @@
         {
             $query = $this->getBuilder()->getSyntax()
                 ->select()
+                ->columns()
+                ->table("post")
                 ->toSQL();
-            $this->assertEquals("SELECT", $query);
+            $this->assertEquals("SELECT * FROM post", $query);
         }
 
 
@@ -60,8 +63,13 @@
         {
             $query = $this->getBuilder()->getSyntax()
                 ->insert()
+                ->table("post")
+                ->columns([
+                    "id" => ":id",
+                    "category" => ":category"
+                ])
                 ->toSQL();
-            $this->assertEquals("INSERT INTO", $query);
+            $this->assertEquals("INSERT INTO post SET id = :id, category = :category", $query);
         }
 
 
@@ -73,8 +81,13 @@
         {
             $query = $this->getBuilder()->getSyntax()
                 ->update()
+                ->table("post")
+                ->columns([
+                    "id" => ":id",
+                    "category" => ":category"
+                ])
                 ->toSQL();
-            $this->assertEquals("UPDATE", $query);
+            $this->assertEquals("UPDATE post SET id = :id, category = :category", $query);
         }
 
 
@@ -86,8 +99,23 @@
         {
             $query = $this->getBuilder()->getSyntax()
                 ->delete()
+                ->table("post")
                 ->toSQL();
-            $this->assertEquals("DELETE", $query);
+            $this->assertEquals("DELETE FROM post", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testTableNameWithAlias() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post", "p")
+                ->toSQL();
+            $this->assertEquals("SELECT FROM post AS p", $query);
         }
     }
 

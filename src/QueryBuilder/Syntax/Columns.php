@@ -42,7 +42,7 @@
         /**
          * Set which columns to use in SELECT type queries
          *
-         * @param mixed ...$columns
+         * @param  mixed  ...$columns
          * @return void
          */
         public function setColumns (...$columns) : void
@@ -69,7 +69,7 @@
         /**
          * Set which columns to use in INSERT or UPDATE type queries
          *
-         * @param array ...$columns
+         * @param  array  ...$columns
          * @return void
          */
         public function setColumnsWithClauseSET (...$columns) : void

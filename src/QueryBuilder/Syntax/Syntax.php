@@ -16,6 +16,13 @@
 
 
         /**
+         * @var Columns
+         */
+        private $columns;
+
+
+
+        /**
          * The different parts of the query
          *
          * @var array
@@ -30,14 +37,6 @@
          * @var string
          */
         private $sql;
-
-
-
-        
-        public function __construct ()
-        {
-            $this->crud = new Crud();
-        }
 
 
 
@@ -94,6 +93,30 @@
 
 
         /**
+         * Set the columns to use in the query
+         *
+         * @param mixed ...$columns
+         * @return self
+         */
+        public function columns (...$columns) : self
+        {
+            $this->columns = new Columns();
+
+            if ($this->crud->getCrud() === "INSERT INTO" || $this->crud->getCrud() === "UPDATE") {
+                $this->columns->setColumnsWithClauseSET($columns);
+            } else {
+                $this->columns->setColumns($columns);
+            }
+
+            $columns = $this->columns->getColumns();
+            $this->sqlParts[__FUNCTION__] = $columns;
+
+            return $this;
+        }
+
+
+
+        /**
          * Generate the sql query
          *
          * @return string
@@ -114,6 +137,8 @@
          */
         private function getCrud (string $crud) : void
         {
+            $this->crud = new Crud();
+
             $this->crud->setCrud($crud);
             $this->sqlParts["crud"] = $this->crud->getCrud();
         }

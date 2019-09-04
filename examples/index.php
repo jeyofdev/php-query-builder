@@ -21,6 +21,7 @@
     $queryBuilder = new QueryBuilder($database, $syntax);
     $query = $queryBuilder->getSyntax()
         ->select()
+        ->columns("id", "category", "content")
         ->toSql();
 
     dd($query);

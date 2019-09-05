@@ -22,11 +22,7 @@
     $query = $queryBuilder->getSyntax()
         ->select()
         ->table("post")
-        ->orderBy([
-            "id" => "ASC",
-            "category" => "DESC",
-            "name" => "DESC"
-        ])
+        ->limit(5)
         ->toSql();
 
     dd($query);

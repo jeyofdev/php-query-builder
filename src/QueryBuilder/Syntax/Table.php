@@ -4,7 +4,7 @@
 
 
     /**
-     * Manage the table that is used in a sql request
+     * Manage the table that is used in the sql queries
      */
     class Table
     {

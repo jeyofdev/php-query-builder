@@ -240,5 +240,35 @@
                 ->toSQL();
             $this->assertEquals("SELECT * FROM post ORDER BY id ASC, category DESC, name ASC", $secondQuery);
         }
+
+
+
+        /**
+         * @test
+         */
+        public function testLimit() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->limit(10)
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post LIMIT 10", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testLimitAsZero() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->limit(0)
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post", $query);
+        }
     }
 

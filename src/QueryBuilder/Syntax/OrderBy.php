@@ -8,7 +8,7 @@
 
 
     /**
-     * Manage the the orderBy command of SQL queries
+     * Manage the "ORDER BY" command of SQL queries
      */
     class OrderBy
     {

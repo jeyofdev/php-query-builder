@@ -47,7 +47,14 @@
 
 
         /**
-         * The different parts of the query
+         * @var Limit
+         */
+        private $limit;
+
+
+
+        /**
+         * The different parts of the sql query
          *
          * @var array
          */
@@ -65,7 +72,7 @@
 
 
         /**
-         * Initialize a query of type SELECT
+         * Initialize a sql query of type SELECT
          *
          * @return self
          */
@@ -78,7 +85,7 @@
 
 
         /**
-         * Initialize a query of type INSERT INTO
+         * Initialize a sql query of type INSERT INTO
          *
          * @return self
          */
@@ -91,7 +98,7 @@
 
 
         /**
-         * Initialize a query of type UPDATE
+         * Initialize a sql query of type UPDATE
          *
          * @return self
          */
@@ -104,7 +111,7 @@
 
 
         /**
-         * Initialize a query of type DELETE
+         * Initialize a sql query of type DELETE
          *
          * @return self
          */
@@ -117,7 +124,7 @@
 
 
         /**
-         * Set the columns to use in the queries
+         * Set the columns to use in the sql query
          *
          * @param  mixed  ...$columns
          * @return self
@@ -143,7 +150,7 @@
 
 
         /**
-         * Set the table to use in the queries
+         * Set the table to use in the sql query
          *
          * @param  string      $tableName
          * @param  string|null $alias
@@ -170,7 +177,7 @@
 
 
         /**
-         * Set the condition in the queries
+         * Set the condition in the sql query
          *
          * @param  string      $column            The column of the table  
          * @param  string|int  $value             The parameter or the value of the condition
@@ -196,7 +203,7 @@
 
 
         /**
-         * Set the orderBy command in the queries
+         * Set the "ORDER BY" command in the sql query
          *
          * @param  string|array $column    The column of the table
          * @param  string|null  $direction The direction (ASC or DESC)
@@ -219,13 +226,32 @@
 
 
         /**
+         * Set the "LIMIT" command in the sql query
+         * @param integer $limit
+         * @return self
+         */
+        public function limit (int $limit) : self
+        {
+            $this->limit = new Limit();
+
+            $this->limit->setLimit($limit);
+            $limit = ($this->limit->getLimit() > 0) ? $this->limit->getLimit() : null;
+
+            $this->sqlParts[__FUNCTION__] = $limit ? " LIMIT {$limit}" : null;
+
+            return $this;
+        }
+
+
+
+        /**
          * Generate the sql query
          *
          * @return string
          */
         public function toSql () : string
         {
-            list($where, $orderBy) = null;
+            list($where, $orderBy, $limit) = null;
             $columns = "*";
 
             $this->checkMethodIsCalled("crud");
@@ -239,7 +265,7 @@
             }else if ($this->crud->getCrud() === "SELECT") {
                 $this->checkMethodIsCalled("table");
                 if (isset($columns)) {
-                    $this->sql = "$crud $columns $table" . $where . $orderBy;
+                    $this->sql = "$crud $columns $table" . $where . $orderBy . $limit;
                 } else {
                     $this->sql = "$crud $table";
                 }

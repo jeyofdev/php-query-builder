@@ -7,7 +7,7 @@
 
 
     /**
-     * Manage columns to use in sql queries
+     * Manage columns to use in the sql queries
      */
     class Columns 
     {

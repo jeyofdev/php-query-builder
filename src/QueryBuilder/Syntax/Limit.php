@@ -37,6 +37,6 @@
          */
         public function setLimit ($limit) : void
         {
-                $this->limit = ($limit > 0) ? $limit : null;
+            $this->limit = ($limit > 0) ? $limit : null;
         }
     }

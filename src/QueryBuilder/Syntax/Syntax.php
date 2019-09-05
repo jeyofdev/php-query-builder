@@ -54,6 +54,13 @@
 
 
         /**
+         * @var Offset
+         */
+        private $offset;
+
+
+
+        /**
          * The different parts of the sql query
          *
          * @var array
@@ -245,13 +252,54 @@
 
 
         /**
+         * Set the "OFFSET" command in the sql query
+         *
+         * @param integer $offset
+         * @return self
+         */
+        public function offset (int $offset) : self
+        {
+            $this->offset = new Offset();
+
+            $this->offset->setOffset($offset);
+
+            if ($this->offset->getOffset() > 0) {
+                if ($this->offset->checkThatLimitIsGreaterThanZero($this->limit->getLimit())) {
+                    $offset = $this->offset->getOffset();
+                    $this->sqlParts[__FUNCTION__] = " OFFSET {$offset}";
+                }
+            }
+
+            return $this;
+        }
+
+
+
+        /**
+         * Set the OFFSET command corresponding to a page in the sql query
+         *
+         * @param integer $page
+         * @return self
+         */
+        public function page (int $page) : self
+        {
+            $this->offset = new Offset();
+            
+            if ($this->offset->checkThatLimitIsGreaterThanZero($this->limit->getLimit())) {
+                return $this->offset($this->limit->getLimit() * ($page - 1));
+            }
+        }
+
+
+
+        /**
          * Generate the sql query
          *
          * @return string
          */
         public function toSql () : string
         {
-            list($where, $orderBy, $limit) = null;
+            list($where, $orderBy, $limit, $offset) = null;
             $columns = "*";
 
             $this->checkMethodIsCalled("crud");
@@ -265,7 +313,7 @@
             }else if ($this->crud->getCrud() === "SELECT") {
                 $this->checkMethodIsCalled("table");
                 if (isset($columns)) {
-                    $this->sql = "$crud $columns $table" . $where . $orderBy . $limit;
+                    $this->sql = "$crud $columns $table" . $where . $orderBy . $limit . $offset;
                 } else {
                     $this->sql = "$crud $table";
                 }

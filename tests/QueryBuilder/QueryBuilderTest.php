@@ -270,5 +270,61 @@
                 ->toSQL();
             $this->assertEquals("SELECT * FROM post", $query);
         }
+
+
+
+        /**
+         * @test
+         */
+        public function testOffset() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->limit(5)
+                ->offset(3)
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post LIMIT 5 OFFSET 3", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testOffsetAsZero() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->limit(5)
+                ->offset(0)
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post LIMIT 5", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testOffsetWithMethodPage() : void
+        {
+            $firstQuery = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->limit(5)
+                ->page(3)
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post LIMIT 5 OFFSET 10", $firstQuery);
+
+            $lastQuery = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->limit(5)
+                ->page(1)
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post LIMIT 5", $lastQuery);
+        }
     }
 

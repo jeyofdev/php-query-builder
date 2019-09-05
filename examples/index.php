@@ -23,6 +23,7 @@
         ->select()
         ->table("post")
         ->limit(5)
+        ->page(2)
         ->toSql();
 
     dd($query);

@@ -23,5 +23,27 @@
 
             return true;
         }
+
+
+
+        /**
+         * Edit an array to an associative array
+         *
+         * @param  array $datas 
+         * @return array
+         */
+        public static function transformToArrayAssoc (array $datas) : array
+        {
+            $items = [];
+
+            foreach ($datas as $data) {
+                foreach ($data as $key => $item) {
+                    $items[$key] = $item;
+                }
+            }
+            $newArray = $items;
+
+            return $newArray;
+        }
     }
 

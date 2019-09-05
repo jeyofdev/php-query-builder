@@ -40,6 +40,13 @@
 
 
         /**
+         * @var OrderBy
+         */
+        private $orderBy;
+
+
+
+        /**
          * The different parts of the query
          *
          * @var array
@@ -163,7 +170,7 @@
 
 
         /**
-         * Set the condition of the query
+         * Set the condition in the queries
          *
          * @param  string      $column            The column of the table  
          * @param  string|int  $value             The parameter or the value of the condition
@@ -189,15 +196,38 @@
 
 
         /**
+         * Set the orderBy command in the queries
+         *
+         * @param  string|array $column    The column of the table
+         * @param  string|null  $direction The direction (ASC or DESC)
+         * @return self
+         */
+        public function orderBy ($column, ?string $direction = "ASC") : self
+        {
+            if (is_null($this->orderBy)) {
+                $this->orderBy = new OrderBy();
+            }
+
+            $this->orderBy->setColumnAndDirection($column, $direction);
+            $orderBy = $this->orderBy->getColumnAndDirection();
+
+            $this->sqlParts[__FUNCTION__] = " ORDER BY {$orderBy}";
+
+            return $this;
+        }
+
+
+
+        /**
          * Generate the sql query
          *
          * @return string
          */
         public function toSql () : string
         {
-            $where = null;
+            list($where, $orderBy) = null;
             $columns = "*";
-            
+
             $this->checkMethodIsCalled("crud");
             extract($this->sqlParts);
 
@@ -209,7 +239,7 @@
             }else if ($this->crud->getCrud() === "SELECT") {
                 $this->checkMethodIsCalled("table");
                 if (isset($columns)) {
-                    $this->sql = "$crud $columns $table" . $where;
+                    $this->sql = "$crud $columns $table" . $where . $orderBy;
                 } else {
                     $this->sql = "$crud $table";
                 }

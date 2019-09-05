@@ -163,5 +163,82 @@
                 ->toSQL();
             $this->assertEquals("SELECT * FROM post AS p WHERE NOT id >= :id", $query);
         }
+
+
+
+        /**
+         * @test
+         */
+        public function testOrderByClause() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->orderBy("id", "DESC")
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post ORDER BY id DESC", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testOrderByClauseWithoutDirection() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->orderBy("id")
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post ORDER BY id ASC", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testOrderByClauseMultiple() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->orderBy("id", "DESC")
+                ->orderBy("category")
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post ORDER BY id DESC, category ASC", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testOrderByClauseAsArray() : void
+        {
+            $firstQuery = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->orderBy([
+                    ["id" => "ASC"],
+                    ["category" => "DESC"],
+                    ["name" => "ASC"]
+                ])
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post ORDER BY id ASC, category DESC, name ASC", $firstQuery);
+
+
+            $secondQuery = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->orderBy([
+                    "id" => "ASC",
+                    "category" => "DESC",
+                    "name" => "ASC"
+                ])
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post ORDER BY id ASC, category DESC, name ASC", $secondQuery);
+        }
     }
 

@@ -28,15 +28,6 @@
 
 
         /**
-         * The different parts of the condition
-         *
-         * @var array
-         */
-        private $conditionParts = [];
-
-
-
-        /**
          * The condition
          *
          * @var string

@@ -21,10 +21,12 @@
     $queryBuilder = new QueryBuilder($database, $syntax);
     $query = $queryBuilder->getSyntax()
         ->select()
-        ->columns("id", "category", "content")
         ->table("post")
-        ->where("id", ":id", "<=")
-        ->where("category", ":category", "=", "and", true)
+        ->orderBy([
+            "id" => "ASC",
+            "category" => "DESC",
+            "name" => "DESC"
+        ])
         ->toSql();
 
     dd($query);

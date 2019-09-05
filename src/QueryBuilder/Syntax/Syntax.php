@@ -33,6 +33,13 @@
 
 
         /**
+         * @var Where;
+         */
+        private $where;
+
+
+
+        /**
          * The different parts of the query
          *
          * @var array
@@ -156,27 +163,58 @@
 
 
         /**
+         * Set the condition of the query
+         *
+         * @param  string      $column            The column of the table  
+         * @param  string|int  $value             The parameter or the value of the condition
+         * @param  string      $operator          The comparison operator used in the condition 
+         * @param  string|null $logicOperator     The logic operator if necessary
+         * @param  boolean     $logicOperatorNOT  The Logic Operator NOT if necessary
+         * @return self
+         */
+        public function where (string $column, $value, string $operator, ?string $logicOperator = null, bool $logicOperatorNOT = false) : self
+        {
+            if (is_null($this->where)) {
+                $this->where = new Where();
+            }
+
+            $this->where->setCondition($column, $value, $operator, $logicOperator, $logicOperatorNOT);
+            $condition = $this->where->getCondition();
+
+            $this->sqlParts[__FUNCTION__] = " WHERE {$condition}";
+
+            return $this;
+        }
+
+
+
+        /**
          * Generate the sql query
          *
          * @return string
          */
         public function toSql () : string
         {
+            $where = null;
+            $columns = "*";
+            
             $this->checkMethodIsCalled("crud");
             extract($this->sqlParts);
 
             if (($this->crud->getCrud() === "INSERT INTO") || ($this->crud->getCrud() === "UPDATE")) {
                 $this->checkMethodIsCalled("columns", "table");
                 $this->sql = "$crud $table $columns";
-            } else if ($this->crud->getCrud() === "SELECT") {
+            } if ($this->crud->getCrud() === "UPDATE") {
+                $this->sql .= $where;
+            }else if ($this->crud->getCrud() === "SELECT") {
                 $this->checkMethodIsCalled("table");
                 if (isset($columns)) {
-                    $this->sql = "$crud $columns $table";
+                    $this->sql = "$crud $columns $table" . $where;
                 } else {
                     $this->sql = "$crud $table";
                 }
             } else if ($this->crud->getCrud() === "DELETE") {
-                $this->sql = "$crud $table";
+                $this->sql = "$crud $table" . $where;
             }
 
             return $this->sql;

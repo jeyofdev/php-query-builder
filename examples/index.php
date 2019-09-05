@@ -23,6 +23,8 @@
         ->select()
         ->columns("id", "category", "content")
         ->table("post")
+        ->where("id", ":id", "<=")
+        ->where("category", ":category", "=", "and", true)
         ->toSql();
 
     dd($query);

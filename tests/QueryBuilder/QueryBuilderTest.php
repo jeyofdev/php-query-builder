@@ -4,7 +4,6 @@
 
 
     use jeyofdev\Php\Query\Builder\Database\Database;
-    use jeyofdev\Php\Query\Builder\Exception\SyntaxException;
     use jeyofdev\Php\Query\Builder\QueryBuilder\QueryBuilder;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Syntax\Syntax;
     use PHPUnit\Framework\TestCase;
@@ -115,7 +114,54 @@
                 ->select()
                 ->table("post", "p")
                 ->toSQL();
-            $this->assertEquals("SELECT FROM post AS p", $query);
+            $this->assertEquals("SELECT * FROM post AS p", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testWhereClause() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post", "p")
+                ->where("id", ":id", ">=")
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post AS p WHERE id >= :id", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testWhereClauseMultiple() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post", "p")
+                ->where("id", ":id", ">=")
+                ->where("category", ":category", "=", "and")
+                ->where("slug", ":slug", "=", "or")
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post AS p WHERE id >= :id AND category = :category OR slug = :slug", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testWhereClauseWithOperatorNot() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post", "p")
+                ->where("id", ":id", ">=", null, true)
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post AS p WHERE NOT id >= :id", $query);
         }
     }
 

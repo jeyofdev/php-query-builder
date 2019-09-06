@@ -11,9 +11,6 @@
      */
     final class SyntaxCrudException extends Exception
     {
-        public function __construct ()
-        {
-            $this->message = "The value of the parameter of the crud method is not allowed";
-        }
+
     }
 

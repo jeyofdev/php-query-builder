@@ -16,6 +16,7 @@
          * List of allowed values ​​for the crud
          */
         const CRUD_ALLOWED = ["INSERT INTO", "SELECT", "UPDATE", "DELETE"];
+        const OPTIONS_SELECT = ["DISTINCT", "SQL_CACHE", "SQL_NO_CACHE"];
 
 
 
@@ -25,6 +26,15 @@
          * @var string
          */
         private $crud;
+
+
+
+        /**
+         * The options of the crud
+         *
+         * @var string
+         */
+        private $option;
 
 
 
@@ -53,7 +63,48 @@
             if (SyntaxHelpers::checkStringIsInArray($crud, self::CRUD_ALLOWED)) {
                 $this->crud = $crud;
             } else {
-                throw new SyntaxCrudException();
+                throw new SyntaxCrudException("The value of the parameter of the crud method is not allowed");
+            }
+        }
+
+
+
+        /**
+         * Get the options of the crud
+         *
+         * @return string|null
+         */
+        public function getOption () : ?string
+        {
+            return $this->option;
+        }
+
+
+
+        /**
+         * Set the options of the crud
+         *
+         * @param  array $options
+         * @return void
+         */
+        public function setOption (...$options)
+        {
+            $options = $options[0][0];
+
+            foreach ($options as $option) {
+                $option = strtoupper($option);
+                
+                if ($this->crud === "SELECT") {
+                    if (SyntaxHelpers::checkStringIsInArray($option, self::OPTIONS_SELECT)) {
+                        if (is_null($this->option)) {
+                            $this->option = $option;
+                        } else {
+                            $this->option .= " $option";
+                        }
+                    } else {
+                        throw new SyntaxCrudException("The option in parameter of the crud is not allowed");
+                    }
+                }
             }
         }
     }

@@ -58,6 +58,21 @@
         /**
          * @test
          */
+        public function testSelectWithOptions() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select("DISTINCT")
+                ->columns()
+                ->table("post")
+                ->toSQL();
+            $this->assertEquals("SELECT DISTINCT * FROM post", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
         public function testInsert() : void
         {
             $query = $this->getBuilder()->getSyntax()

@@ -88,11 +88,12 @@
         /**
          * Initialize a sql query of type SELECT
          *
+         * @param  array ...$options
          * @return self
          */
-        public function select () : self
+        public function select (...$options) : self
         {
-            $this->getCrud("SELECT");
+            $this->getCrud("SELECT", $options);
             return $this;
         }
 
@@ -101,11 +102,12 @@
         /**
          * Initialize a sql query of type INSERT INTO
          *
+         * @param  array ...$options
          * @return self
          */
-        public function insert () : self
+        public function insert (...$options) : self
         {
-            $this->getCrud("INSERT INTO");
+            $this->getCrud("INSERT INTO", $options);
             return $this;
         }
 
@@ -114,11 +116,12 @@
         /**
          * Initialize a sql query of type UPDATE
          *
+         * @param  array ...$options
          * @return self
          */
-        public function update () : self
+        public function update (...$options) : self
         {
-            $this->getCrud("UPDATE");
+            $this->getCrud("UPDATE", $options);
             return $this;
         }
 
@@ -127,11 +130,12 @@
         /**
          * Initialize a sql query of type DELETE
          *
+         * @param  array ...$options
          * @return self
          */
-        public function delete () : self
+        public function delete (...$options) : self
         {
-            $this->getCrud("DELETE");
+            $this->getCrud("DELETE", $options);
             return $this;
         }
 
@@ -377,19 +381,24 @@
         }
 
 
-
         /**
          * Get the value of the crud
          *
-         * @param  string $crud
+         * @param  string $crud        SELECT, INSERT INTO, UPDATE or DELETE
+         * @param  array  ...$options  DISTINCT, SQL_CACHE, SQL_NO_CACHE...
          * @return void
          */
-        private function getCrud (string $crud) : void
+        private function getCrud (string $crud, ...$options) : void
         {
             $this->crud = new Crud();
 
             $this->crud->setCrud($crud);
-            $this->sqlParts["crud"] = $this->crud->getCrud();
+            $this->crud->setOption($options);
+
+            $crud = $this->crud->getCrud();
+            $options = $this->crud->getOption();
+
+            $this->sqlParts["crud"] = !is_null($options) ? "$crud $options" : $crud;
         }
 
 

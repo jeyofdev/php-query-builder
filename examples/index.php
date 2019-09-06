@@ -21,10 +21,8 @@
     $queryBuilder = new QueryBuilder($database, $syntax);
     $query = $queryBuilder->getSyntax()
         ->select()
-        ->columns("c.*", "pc.post_id")
-        ->table("post_category", "pc")
-        ->join("left join", "category", "c")
-        ->on("c.id", "pc.category_id")
+        ->columns("name")
+        ->table("post")
         ->toSql();
 
     dump($query);

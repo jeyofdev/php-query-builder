@@ -326,5 +326,88 @@
                 ->toSQL();
             $this->assertEquals("SELECT * FROM post LIMIT 5", $lastQuery);
         }
+
+
+
+        /**
+         * @test
+         */
+        public function testJoin() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("c.*", "pc.post_id")
+                ->table("post_category", "pc")
+                ->join("JOIN", "category", "c")
+                ->on("c.id", "pc.category_id")
+                ->toSQL();
+            $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc JOIN category AS c ON c.id = pc.category_id", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testInnerJoin() : void
+        {
+                $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("c.*", "pc.post_id")
+                ->table("post_category", "pc")
+                ->join("INNER JOIN", "category", "c")
+                ->on("pc.category_id", "c.id")
+                ->toSQL();
+            $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc INNER JOIN category AS c ON pc.category_id = c.id", $query);
     }
 
+
+
+    /**
+     * @test
+     */
+    public function testCrossJoin() : void
+    {
+        $query = $this->getBuilder()->getSyntax()
+            ->select()
+            ->columns("c.*", "pc.post_id")
+            ->table("post_category", "pc")
+            ->join("CROSS JOIN", "category", "c")
+            ->toSQL();
+        $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc CROSS JOIN category AS c", $query);
+    }
+
+
+
+        /**
+         * @test
+         */
+        public function testLeftJoin() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("c.*", "pc.post_id")
+                ->table("post_category", "pc")
+                ->join("LEFT JOIN", "category", "c")
+                ->on("pc.category_id", "c.id")
+                ->toSQL();
+            $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc LEFT JOIN category AS c ON pc.category_id = c.id", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testRightJoin() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("c.*", "pc.post_id")
+                ->table("post_category", "pc")
+                ->join("RIGHT JOIN", "category", "c")
+                ->on("pc.category_id", "c.id")
+                ->toSQL();
+            $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc RIGHT JOIN category AS c ON pc.category_id = c.id", $query);
+        }
+    }

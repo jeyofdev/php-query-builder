@@ -61,6 +61,13 @@
 
 
         /**
+         * @var Join
+         */
+        private $join;
+
+
+
+        /**
          * The different parts of the sql query
          *
          * @var array
@@ -234,7 +241,7 @@
 
         /**
          * Set the "LIMIT" command in the sql query
-         * @param integer $limit
+         * @param  integer $limit
          * @return self
          */
         public function limit (int $limit) : self
@@ -254,7 +261,7 @@
         /**
          * Set the "OFFSET" command in the sql query
          *
-         * @param integer $offset
+         * @param  integer $offset
          * @return self
          */
         public function offset (int $offset) : self
@@ -278,7 +285,7 @@
         /**
          * Set the OFFSET command corresponding to a page in the sql query
          *
-         * @param integer $page
+         * @param  integer $page
          * @return self
          */
         public function page (int $page) : self
@@ -293,13 +300,58 @@
 
 
         /**
+         * Set the join between 2 tables in a sql query
+         *
+         * @param  string      $joinType   The type of join
+         * @param  string      $joinTable  The join table
+         * @param  string|null $joinAlias  The alias of the join table
+         * @return self
+         */
+        public function join (string $joinType, string $joinTable, ?string $joinAlias = null) : self
+        {
+            $this->join = new Join();
+
+            $this->join->setJoin($joinType, $joinTable, $joinAlias);
+            $join = $this->join->getJoin();
+
+            $this->sqlParts[__FUNCTION__] = " {$join}";
+
+            return $this;
+        }
+
+
+
+        /**
+         * Set the columns that serve as a join between the 2 tables in a sql query
+         *
+         * @param  string  $relationA  The column that serve as a join of the table A
+         * @param  string  $relationB  The column that serve as a join of the table B
+         * @return self
+         */
+        public function on (string $relationA, string $relationB) : self
+        {
+            if (!is_null($this->join)) {
+                $this->join->setOn($relationA, $relationB);
+
+                $on = $this->join->getOn();
+                $this->sqlParts[__FUNCTION__] = " ON {$on}";
+            } else {
+                throw new SyntaxException("join");
+            }
+
+            return $this;
+        }
+
+
+
+        /**
          * Generate the sql query
          *
          * @return string
          */
         public function toSql () : string
         {
-            list($where, $orderBy, $limit, $offset) = null;
+            list($join, $on, $where, $orderBy, $limit, $offset) = null;
             $columns = "*";
 
             $this->checkMethodIsCalled("crud");
@@ -313,7 +365,7 @@
             }else if ($this->crud->getCrud() === "SELECT") {
                 $this->checkMethodIsCalled("table");
                 if (isset($columns)) {
-                    $this->sql = "$crud $columns $table" . $where . $orderBy . $limit . $offset;
+                    $this->sql = "$crud $columns $table" .  $join . $on . $where . $orderBy . $limit . $offset;
                 } else {
                     $this->sql = "$crud $table";
                 }

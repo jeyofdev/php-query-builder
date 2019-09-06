@@ -21,9 +21,10 @@
     $queryBuilder = new QueryBuilder($database, $syntax);
     $query = $queryBuilder->getSyntax()
         ->select()
-        ->table("post")
-        ->limit(5)
-        ->page(2)
+        ->columns("c.*", "pc.post_id")
+        ->table("post_category", "pc")
+        ->join("left join", "category", "c")
+        ->on("c.id", "pc.category_id")
         ->toSql();
 
-    dd($query);
+    dump($query);

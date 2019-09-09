@@ -202,15 +202,17 @@
          * @param  string      $operator          The comparison operator used in the condition 
          * @param  string|null $logicOperator     The logic operator if necessary
          * @param  boolean     $logicOperatorNOT  The Logic Operator NOT if necessary
+         * @param  boolean     $begin             Activate the opening parenthesis
+         * @param  boolean     $end               Activate the closing parenthesis       
          * @return self
          */
-        public function where (string $column, $value, string $operator, ?string $logicOperator = null, bool $logicOperatorNOT = false) : self
+        public function where (string $column, $value, string $operator, ?string $logicOperator = null, bool $logicOperatorNOT = false, bool $begin = false, bool $end = false) : self
         {
             if (is_null($this->where)) {
                 $this->where = new Where();
             }
 
-            $this->where->setCondition($column, $value, $operator, $logicOperator, $logicOperatorNOT);
+            $this->where->setCondition($column, $value, $operator, $logicOperator, $logicOperatorNOT, $begin, $end);
             $condition = $this->where->getCondition();
 
             $this->sqlParts[__FUNCTION__] = " WHERE {$condition}";

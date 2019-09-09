@@ -184,6 +184,83 @@
         /**
          * @test
          */
+        public function testWhereClauseWithParenthesis() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->where("id", ":id", ">")
+                ->where("category", ":category_one", "=", "and", false, true, false)
+                ->where("category", ":category_two", "=", "or", false, false, true)
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post WHERE id > :id AND (category = :category_one OR category = :category_two)", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testWhereClauseWithOperatorIn() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->where("id", [1, 2, 3], "IN")
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post WHERE id IN (1, 2, 3)", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testWhereClauseWithOperatorBetween() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->where("id", [5, 10], "BETWEEN")
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post WHERE id BETWEEN 5 AND 10", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testWhereClauseWithOperatorIsNull() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->where("id", null, "IS NULL")
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post WHERE id IS NULL", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testWhereClauseWithOperatorLike() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->where("name", 'S%', "LIKE")
+                ->toSQL();
+            $this->assertEquals("SELECT * FROM post WHERE name LIKE 'S%'", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
         public function testOrderByClause() : void
         {
             $query = $this->getBuilder()->getSyntax()

@@ -4,6 +4,7 @@
 
 
     use jeyofdev\Php\Query\Builder\Exception\SyntaxException;
+    use jeyofdev\Php\Query\Builder\QueryBuilder\Syntax\FunctionsSql\AggregateFunctionSql;
 
 
     /**
@@ -22,6 +23,13 @@
          * @var Columns
          */
         private $columns;
+
+
+
+        /**
+         * @var AggregateFunctionSql
+         */
+        private $aggregateFunctionSql;
 
 
 
@@ -161,6 +169,30 @@
 
             $columns = $this->columns->getColumns();
             $this->sqlParts[__FUNCTION__] = $columns;
+
+            return $this;
+        }
+
+
+
+        /**
+         * Set the sql function of the query
+         *
+         * @param  string       $functionSql  The sql function 
+         * @param  string       $columns      The column of the table  
+         * @param  string|null  $alias        The alias of the sql function
+         * @param  boolean|null $unique       Use the sql function as unique column
+         * @return self
+         */
+        public function functionSql (string $functionSql, string $columns, ?string $alias = null, ?bool $unique = false) : self
+        {
+            $this->aggregateFunctionSql = new AggregateFunctionSql();
+
+            $this->aggregateFunctionSql->setFunctionSql($functionSql, $columns, $alias);
+            $function = $this->aggregateFunctionSql->getFunctionSql();
+
+            $this->sqlParts[__FUNCTION__] = $function;
+            $this->sqlParts["aggregate"] = $unique;
 
             return $this;
         }
@@ -357,11 +389,16 @@
          */
         public function toSql () : string
         {
-            list($join, $on, $where, $orderBy, $limit, $offset) = null;
+            list($functionSql, $join, $on, $where, $orderBy, $limit, $offset) = null;
+
             $columns = "*";
 
             $this->checkMethodIsCalled("crud");
             extract($this->sqlParts);
+
+            if (!is_null($functionSql)) {
+                $columns = null;
+            }
 
             if (($this->crud->getCrud() === "INSERT INTO") || ($this->crud->getCrud() === "UPDATE")) {
                 $this->checkMethodIsCalled("columns", "table");
@@ -370,6 +407,13 @@
                 $this->sql .= $where;
             }else if ($this->crud->getCrud() === "SELECT") {
                 $this->checkMethodIsCalled("table");
+                if (isset($aggregate)) {
+                    if($aggregate === true) {
+                        $columns = $functionSql;
+                    } else {
+                        $columns = "$columns, $functionSql";
+                    }
+                } 
                 if (isset($columns)) {
                     $this->sql = "$crud $columns $table" .  $join . $on . $where . $orderBy . $limit . $offset;
                 } else {

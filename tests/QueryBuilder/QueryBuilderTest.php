@@ -137,6 +137,36 @@
         /**
          * @test
          */
+        public function testFunctionSqlCount() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->functionSql("count", "id", null, true)
+                ->table("post")
+                ->toSQL();
+            $this->assertEquals("SELECT COUNT(id) FROM post", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testFunctionSqlAvg() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->functionSql("avg", "id", null, true)
+                ->table("post")
+                ->toSQL();
+            $this->assertEquals("SELECT AVG(id) FROM post", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
         public function testWhereClause() : void
         {
             $query = $this->getBuilder()->getSyntax()

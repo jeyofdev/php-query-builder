@@ -21,9 +21,8 @@
     $queryBuilder = new QueryBuilder($database, $syntax);
     $query = $queryBuilder->getSyntax()
         ->select()
-        ->columns("id", "name")
+        ->functionSql("count", "id", null, true)
         ->table("post")
-        ->where("id", [5, 10], "BETWEEN")
         ->toSql();
 
     dump($query);

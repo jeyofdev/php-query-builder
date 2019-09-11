@@ -137,36 +137,6 @@
         /**
          * @test
          */
-        public function testFunctionSqlCount() : void
-        {
-            $query = $this->getBuilder()->getSyntax()
-                ->select()
-                ->functionSql("count", "id", null, true)
-                ->table("post")
-                ->toSQL();
-            $this->assertEquals("SELECT COUNT(id) FROM post", $query);
-        }
-
-
-
-        /**
-         * @test
-         */
-        public function testFunctionSqlAvg() : void
-        {
-            $query = $this->getBuilder()->getSyntax()
-                ->select()
-                ->functionSql("avg", "id", null, true)
-                ->table("post")
-                ->toSQL();
-            $this->assertEquals("SELECT AVG(id) FROM post", $query);
-        }
-
-
-
-        /**
-         * @test
-         */
         public function testWhereClause() : void
         {
             $query = $this->getBuilder()->getSyntax()
@@ -175,6 +145,42 @@
                 ->where("id", ":id", ">=")
                 ->toSQL();
             $this->assertEquals("SELECT * FROM post AS p WHERE id >= :id", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testGroupBy() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("client")
+                ->functionSql("sum", "price", "price_sum")
+                ->table("sale")
+                ->groupBy("client")
+                ->toSQL();
+            $this->assertEquals("SELECT client, SUM(price) AS price_sum FROM sale GROUP BY client", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testGroupByWithRollup() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("client")
+                ->functionSql("sum", "price", "sum_price")
+                ->functionSql("count", "*", "count")
+                ->functionSql("max", "price", "max_price")
+                ->table("sale")
+                ->groupBy("client", true)
+                ->toSQL();
+            $this->assertEquals("SELECT client, SUM(price) AS sum_price, COUNT(*) AS count, MAX(price) AS max_price FROM sale GROUP BY client WITH ROLLUP", $query);
         }
 
 

@@ -20,37 +20,37 @@
 
 
         /**
-         * The sql function
+         * The sql functions
          *
          * @var string
          */
-        protected $aggregate;
+        protected $functionSql;
 
 
 
         /**
-         * Set the sql function
+         * The sql functions parts
          *
-         * @param string       $functionSql  The sql function 
-         * @param string       $column       The column of the table  
-         * @param string|null  $alias        The alias of the sql function
+         * @var array
+         */
+        protected $functionSqlParts;
+
+
+
+        /**
+         * Set the sql functions
+         *
+         * @param string       $functionSqlName  The sql function 
+         * @param string       $column           The column of the table  
+         * @param string|null  $alias            The alias of the sql function
          * @return void
          */
-        public function setFunctionSql (string $functionSql, $column, ?string $alias = null) : void
+        public function setFunctionSql (string $functionSqlName, string $column, ?string $alias = null) : void
         {
-            $functionSql = strtoupper($functionSql);
+            $functionSqlName = strtoupper($functionSqlName);
 
-            if (SyntaxHelpers::checkStringIsInArray($functionSql, self::FUNCTION_SQL_AGGREGATE_ALLOWED)) {
-                $method = strtolower($functionSql);
-                $this->aggregate = $this->$method($column);
-
-                if (!is_null($alias)) {
-                    $this->aggregate .= " AS $alias";
-                }
-
-            } else {
-                throw new SyntaxFunctionSqlException("The sql function is not allowed");
-            }
+            $this->addFunctionSql($functionSqlName, $column, $alias);
+            $this->functionSql = implode(", ", $this->functionSqlParts);
         }
 
 
@@ -62,6 +62,32 @@
          */
         public function getFunctionSql () : ?string
         {
-            return $this->aggregate;
+            return $this->functionSql;
+        }
+
+
+
+        /**
+         * Add a sql function
+         *
+         * @param string       $functionSqlName  The sql function 
+         * @param string       $column           The column of the table  
+         * @param string|null  $alias            The alias of the sql function
+         * @return void
+         */
+        private function addFunctionSql (string $functionSqlName, string $column, ?string $alias = null) : void
+        {
+            if (SyntaxHelpers::checkStringIsInArray($functionSqlName, self::FUNCTION_SQL_AGGREGATE_ALLOWED)) {
+                $method = strtolower($functionSqlName);
+
+                if (!is_null($alias)) {
+                    $alias = " AS $alias";
+                }
+
+                $this->functionSqlParts[] = $this->$method($column) . $alias;
+
+            } else {
+                throw new SyntaxFunctionSqlException("The sql function is not allowed");
+            }
         }
     }

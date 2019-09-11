@@ -21,8 +21,12 @@
     $queryBuilder = new QueryBuilder($database, $syntax);
     $query = $queryBuilder->getSyntax()
         ->select()
-        ->functionSql("count", "id", null, true)
-        ->table("post")
+        ->columns("client")
+        ->functionSql("sum", "price", "sum_price")
+        ->functionSql("count", "*", "count")
+        ->functionSql("max", "price", "max_price")
+        ->table("sale")
+        ->groupBy("client", true)
         ->toSql();
 
     dump($query);

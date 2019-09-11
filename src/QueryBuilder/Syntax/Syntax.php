@@ -41,9 +41,23 @@
 
 
         /**
+         * @var Join
+         */
+        private $join;
+
+
+
+        /**
          * @var Where;
          */
         private $where;
+
+
+
+        /**
+         * @var GroupBy
+         */
+        private $groupBy;
 
 
 
@@ -65,13 +79,6 @@
          * @var Offset
          */
         private $offset;
-
-
-
-        /**
-         * @var Join
-         */
-        private $join;
 
 
 
@@ -181,18 +188,18 @@
          * @param  string       $functionSql  The sql function 
          * @param  string       $columns      The column of the table  
          * @param  string|null  $alias        The alias of the sql function
-         * @param  boolean|null $unique       Use the sql function as unique column
          * @return self
          */
-        public function functionSql (string $functionSql, string $columns, ?string $alias = null, ?bool $unique = false) : self
+        public function functionSql (string $functionSql, string $columns, ?string $alias = null) : self
         {
-            $this->aggregateFunctionSql = new AggregateFunctionSql();
+            if (is_null($this->aggregateFunctionSql)) {
+                $this->aggregateFunctionSql = new AggregateFunctionSql();
+            }
 
             $this->aggregateFunctionSql->setFunctionSql($functionSql, $columns, $alias);
             $function = $this->aggregateFunctionSql->getFunctionSql();
 
             $this->sqlParts[__FUNCTION__] = $function;
-            $this->sqlParts["aggregate"] = $unique;
 
             return $this;
         }
@@ -248,6 +255,31 @@
             $condition = $this->where->getCondition();
 
             $this->sqlParts[__FUNCTION__] = " WHERE {$condition}";
+
+            return $this;
+        }
+
+
+
+        /**
+         * Set the "GROUP BY" command in the sql query
+         *
+         * @param  string   $column  The column that groups the results of sql functions
+         * @param  boolean  $rollup  Enable the rollup option
+         * @return self
+         */
+        public function groupBy (string $column, bool $rollup = false) : self
+        {
+            $this->groupBy = new GroupBy();
+
+            $this->groupBy->setGroupBy($column);
+            $groupBy = $this->groupBy->getGroupBy();
+
+            $this->sqlParts[__FUNCTION__] = " GROUP BY {$groupBy}";
+
+            if ($rollup) {
+                $this->sqlParts[__FUNCTION__] .= " WITH ROLLUP";
+            }
 
             return $this;
         }
@@ -389,16 +421,12 @@
          */
         public function toSql () : string
         {
-            list($functionSql, $join, $on, $where, $orderBy, $limit, $offset) = null;
+            list($functionSql, $join, $on, $where, $groupBy, $orderBy, $limit, $offset) = null;
 
             $columns = "*";
 
             $this->checkMethodIsCalled("crud");
             extract($this->sqlParts);
-
-            if (!is_null($functionSql)) {
-                $columns = null;
-            }
 
             if (($this->crud->getCrud() === "INSERT INTO") || ($this->crud->getCrud() === "UPDATE")) {
                 $this->checkMethodIsCalled("columns", "table");
@@ -407,15 +435,13 @@
                 $this->sql .= $where;
             }else if ($this->crud->getCrud() === "SELECT") {
                 $this->checkMethodIsCalled("table");
-                if (isset($aggregate)) {
-                    if($aggregate === true) {
-                        $columns = $functionSql;
-                    } else {
-                        $columns = "$columns, $functionSql";
-                    }
-                } 
+                
+                if (!is_null($functionSql)) {
+                    $columns = "$columns, $functionSql";
+                }
+
                 if (isset($columns)) {
-                    $this->sql = "$crud $columns $table" .  $join . $on . $where . $orderBy . $limit . $offset;
+                    $this->sql = "$crud $columns $table" .  $join . $on . $where . $groupBy . $orderBy . $limit . $offset;
                 } else {
                     $this->sql = "$crud $table";
                 }

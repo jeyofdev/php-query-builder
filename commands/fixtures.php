@@ -15,10 +15,10 @@
     $database
         ->clear($database->getTableName("post"))
         ->clear($database->getTableName("category"))
-        ->clear($database->getTableName("post_category"));
-
+        ->clear($database->getTableName("post_category"))
+        ->clear($database->getTableName("sale"));
 
     
     // Add fake datas in the tables of the database
     $fixtures = new Fixtures($database);
-    $fixtures->add("fr_FR", "post", "category", "post_category");
+    $fixtures->add("fr_FR", "post", "category", "post_category", "sale");

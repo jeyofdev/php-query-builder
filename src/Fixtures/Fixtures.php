@@ -66,8 +66,6 @@
                         ");
                         $categories[] = $this->database->getPDO()->lastInsertId();
                     }
-
-                    
                 }
 
                 else if ($key === 2) {
@@ -79,6 +77,16 @@
                                 category_id = $category
                             ");
                         }
+                    }
+                }
+
+                else if ($key === 3) {
+                    for ($i = 0; $i < 10; $i++) { 
+                        $this->database->getPDO()->exec("INSERT INTO {$table} SET 
+                            client = '{$faker->randomElement(["Pierre","Maria", "Meghan", "John"])}',
+                            price = '{$faker->numberBetween(20, 50)}',
+                            sold_at = '{$faker->date} {$faker->time}'
+                        ");
                     }
                 }
             }

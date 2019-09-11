@@ -53,6 +53,17 @@
     ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
 
 
+    // Define the table "sale"
+    $postTable = "CREATE TABLE IF NOT EXISTS sale (
+        id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        client VARCHAR(255) NOT NULL,
+        price VARCHAR(255) NOT NULL,
+        sold_at DATETIME NOT NULL,
+        PRIMARY KEY (id)
+    )
+    ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+
     // Add the tables in the database
     $database
         ->addTable($postTable)

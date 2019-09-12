@@ -62,6 +62,13 @@
 
 
         /**
+         * @var Having
+         */
+        private $having;
+
+
+
+        /**
          * @var OrderBy
          */
         private $orderBy;
@@ -287,6 +294,39 @@
 
 
         /**
+         * Set the "HAVING" command in the sql query
+         *
+         * @param  string      $functionSql       The sql function 
+         * @param  string      $column            The column of the table  
+         * @param  string|int  $value             The parameter or the value of the condition
+         * @param  string      $operator          The comparison operator used in the condition 
+         * @param  string|null $logicOperator     The logic operator if necessary
+         * @param  boolean     $logicOperatorNOT  The Logic Operator NOT if necessary
+         * @param  boolean     $begin             Activate the opening parenthesis
+         * @param  boolean     $end               Activate the closing parenthesis       
+         * @return self
+         */
+        public function having (string $functionSql, string $column, $value, string $operator, ?string $logicOperator = null, bool $logicOperatorNOT = false, bool $begin = false, bool $end = false) : self
+        {
+            if (is_null($this->aggregateFunctionSql)) {
+                $this->aggregateFunctionSql = new AggregateFunctionSql();
+            }
+
+            if (is_null($this->having)) {
+                $this->having = new Having($this->aggregateFunctionSql);
+            }
+
+            $this->having->setHaving($functionSql, $column, $value, $operator, $logicOperator, $logicOperatorNOT, $begin, $end);
+            $having = $this->having->getHaving();
+
+            $this->sqlParts[__FUNCTION__] = " HAVING {$having}";
+
+            return $this;
+        }
+
+
+
+        /**
          * Set the "ORDER BY" command in the sql query
          *
          * @param  string|array $column    The column of the table
@@ -421,7 +461,7 @@
          */
         public function toSql () : string
         {
-            list($functionSql, $join, $on, $where, $groupBy, $orderBy, $limit, $offset) = null;
+            list($functionSql, $join, $on, $where, $groupBy, $having, $orderBy, $limit, $offset) = null;
 
             $columns = "*";
 
@@ -441,7 +481,7 @@
                 }
 
                 if (isset($columns)) {
-                    $this->sql = "$crud $columns $table" .  $join . $on . $where . $groupBy . $orderBy . $limit . $offset;
+                    $this->sql = "$crud $columns $table" .  $join . $on . $where . $groupBy . $having . $orderBy . $limit . $offset;
                 } else {
                     $this->sql = "$crud $table";
                 }

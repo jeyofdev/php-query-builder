@@ -23,10 +23,10 @@
         ->select()
         ->columns("client")
         ->functionSql("sum", "price", "sum_price")
-        ->functionSql("count", "*", "count")
-        ->functionSql("max", "price", "max_price")
         ->table("sale")
-        ->groupBy("client", true)
+        ->groupBy("client")
+        ->having("sum", "price", 30, ">")
+
         ->toSql();
 
     dump($query);

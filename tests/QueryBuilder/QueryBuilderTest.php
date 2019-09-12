@@ -152,42 +152,6 @@
         /**
          * @test
          */
-        public function testGroupBy() : void
-        {
-            $query = $this->getBuilder()->getSyntax()
-                ->select()
-                ->columns("client")
-                ->functionSql("sum", "price", "price_sum")
-                ->table("sale")
-                ->groupBy("client")
-                ->toSQL();
-            $this->assertEquals("SELECT client, SUM(price) AS price_sum FROM sale GROUP BY client", $query);
-        }
-
-
-
-        /**
-         * @test
-         */
-        public function testGroupByWithRollup() : void
-        {
-            $query = $this->getBuilder()->getSyntax()
-                ->select()
-                ->columns("client")
-                ->functionSql("sum", "price", "sum_price")
-                ->functionSql("count", "*", "count")
-                ->functionSql("max", "price", "max_price")
-                ->table("sale")
-                ->groupBy("client", true)
-                ->toSQL();
-            $this->assertEquals("SELECT client, SUM(price) AS sum_price, COUNT(*) AS count, MAX(price) AS max_price FROM sale GROUP BY client WITH ROLLUP", $query);
-        }
-
-
-
-        /**
-         * @test
-         */
         public function testWhereClauseMultiple() : void
         {
             $query = $this->getBuilder()->getSyntax()
@@ -290,6 +254,171 @@
                 ->where("name", 'S%', "LIKE")
                 ->toSQL();
             $this->assertEquals("SELECT * FROM post WHERE name LIKE 'S%'", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testGroupBy() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("client")
+                ->functionSql("sum", "price", "price_sum")
+                ->table("sale")
+                ->groupBy("client")
+                ->toSQL();
+            $this->assertEquals("SELECT client, SUM(price) AS price_sum FROM sale GROUP BY client", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testGroupByWithRollup() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("client")
+                ->functionSql("sum", "price", "sum_price")
+                ->functionSql("count", "*", "count")
+                ->functionSql("max", "price", "max_price")
+                ->table("sale")
+                ->groupBy("client", true)
+                ->toSQL();
+            $this->assertEquals("SELECT client, SUM(price) AS sum_price, COUNT(*) AS count, MAX(price) AS max_price FROM sale GROUP BY client WITH ROLLUP", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testHavingClause() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("client")
+                ->functionSql("sum", "price", "sum_price")
+                ->table("sale")
+                ->groupBy("client")
+                ->having("sum", "price", 30, ">")
+                ->toSQL();
+            $this->assertEquals("SELECT client, SUM(price) AS sum_price FROM sale GROUP BY client HAVING SUM(price) > 30", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testHavingClauseMultiple() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("client")
+                ->functionSql("sum", "price", "sum_price")
+                ->table("sale")
+                ->groupBy("client")
+                ->having("sum", "price", 30, ">")
+                ->having("sum", "price", 50, "<", "and", false)
+                ->toSQL();
+            $this->assertEquals("SELECT client, SUM(price) AS sum_price FROM sale GROUP BY client HAVING SUM(price) > 30 AND SUM(price) < 50", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testHavingClauseWithOperatorNot() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("client")
+                ->functionSql("sum", "price", "sum_price")
+                ->table("sale")
+                ->groupBy("client")
+                ->having("sum", "price", 30, ">", null, true)
+                ->toSQL();
+            $this->assertEquals("SELECT client, SUM(price) AS sum_price FROM sale GROUP BY client HAVING NOT SUM(price) > 30", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testHavingClauseWithParenthesis() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("client")
+                ->functionSql("sum", "price", "sum_price")
+                ->table("sale")
+                ->groupBy("client")
+                ->having("sum", "price", 30, ">")
+                ->having("sum", "price", 50, "<", "and", false, true, false)
+                ->having("sum", "price", [56, 143], "IN", "or", false, false, true)
+                ->toSQL();
+            $this->assertEquals("SELECT client, SUM(price) AS sum_price FROM sale GROUP BY client HAVING SUM(price) > 30 AND (SUM(price) < 50 OR SUM(price) IN (56, 143))", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testHavingClauseWithOperatorIn() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("client")
+                ->functionSql("sum", "price", "sum_price")
+                ->table("sale")
+                ->groupBy("client")
+                ->having("sum", "price", [56, 143], "IN")
+                ->toSQL();
+            $this->assertEquals("SELECT client, SUM(price) AS sum_price FROM sale GROUP BY client HAVING SUM(price) IN (56, 143)", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testHavingClauseWithOperatorBetween() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("client")
+                ->functionSql("sum", "price", "sum_price")
+                ->table("sale")
+                ->groupBy("client")
+                ->having("sum", "price", [50, 100], "BETWEEN")
+                ->toSQL();
+            $this->assertEquals("SELECT client, SUM(price) AS sum_price FROM sale GROUP BY client HAVING SUM(price) BETWEEN 50 AND 100", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testHavingClauseWithOperatorIsNull() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->columns("client")
+                ->functionSql("sum", "price", "sum_price")
+                ->table("sale")
+                ->groupBy("client")
+                ->having("sum", "price", null, "IS NULL")
+                ->toSQL();
+            $this->assertEquals("SELECT client, SUM(price) AS sum_price FROM sale GROUP BY client HAVING SUM(price) IS NULL", $query);
         }
 
 

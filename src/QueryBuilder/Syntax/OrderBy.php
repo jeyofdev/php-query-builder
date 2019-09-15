@@ -4,7 +4,7 @@
 
 
     use jeyofdev\Php\Query\Builder\Exception\SyntaxOrderByException;
-    use jeyofdev\Php\Query\Builder\Helpers\SyntaxHelpers;
+    use jeyofdev\Php\Query\Builder\Helpers\QueryBuilderHelpers;
 
 
     /**
@@ -89,7 +89,7 @@
                 $this->columnAndDirectionAsArray[$this->column] = $this->direction;
             } else {
                 if (array_key_exists(0, $column)) {
-                    $this->columnAndDirectionAsArray = SyntaxHelpers::transformToArrayAssoc($column);
+                    $this->columnAndDirectionAsArray = QueryBuilderHelpers::transformToArrayAssoc($column);
                 } else {
                     $this->columnAndDirectionAsArray = $column;
                 }

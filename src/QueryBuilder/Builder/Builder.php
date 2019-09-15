@@ -33,6 +33,13 @@
 
 
         /**
+         * @var Attribute
+         */
+        private $attribute;
+
+
+
+        /**
          * The sql query
          *
          * @var string
@@ -65,6 +72,35 @@
         public function __construct(PDO $pdo)
         {
             $this->pdo = $pdo;
+        }
+
+
+
+        /**
+         * Set the value of an attribute
+         *
+         * @param  array  $attributes
+         * @return self
+         */
+        public function setAttribute (array $attributes = []) : self
+        {
+            $this->attribute = new Attribute($this->pdo);
+            $this->attribute->setAttribute($attributes);
+
+            return $this;
+        }
+
+
+        /**
+         * Get the value of an attribute
+         *
+         * @param  string  $attribute
+         * @return int
+         */
+        public function getAttribute (string $attribute) : int
+        {
+            $this->attribute = new Attribute($this->pdo);
+            return $this->attribute->getAttribute($attribute);
         }
 
 
@@ -136,10 +172,10 @@
         /**
          * Get the result of the sql query
          *
-         * @param  integer  $fetchMode  The default fetch mode
+         * @param  string  $fetchMode  The default fetch mode
          * @return mixed
          */
-        public function fetch (int $fetchMode = PDO::FETCH_BOTH)
+        public function fetch (string $fetchMode = "FETCH_BOTH")
         {
             $this->fetch = new Fetch($this->statement);
             $this->results = $this->fetch->getResults($fetchMode, true);
@@ -152,10 +188,10 @@
         /**
          * Get all the results of the sql query
          *
-         * @param  integer  $fetchMode  The default fetch mode
+         * @param  string  $fetchMode  The default fetch mode
          * @return mixed
          */
-        public function fetchAll (int $fetchMode = PDO::FETCH_BOTH)
+        public function fetchAll (string $fetchMode = "FETCH_BOTH")
         {
             $this->fetch = new Fetch($this->statement);
             $this->results = $this->fetch->getResults($fetchMode, false);

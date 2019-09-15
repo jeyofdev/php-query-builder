@@ -3,32 +3,16 @@
     namespace jeyofdev\Php\Query\Builder\QueryBuilder\Builder;
 
 
-    use PDO;
+    use jeyofdev\Php\Query\Builder\Helpers\QueryBuilderHelpers;
+    use jeyofdev\Php\Query\Builder\QueryBuilder\Attributes\AttributesAbstract;
     use PDOStatement;
 
 
     /**
      * Manage the results of a sql query
      */
-    class Fetch
+    class Fetch extends AttributesAbstract
     {
-        /**
-         * The fetch mode allowed
-         */
-        const FETCH_MODES_ALLOWED = [
-            "FETCH_ASSOC" => PDO::FETCH_ASSOC,
-            "FETCH_BOTH" => PDO::FETCH_BOTH,
-            "FETCH_CLASS" => PDO::FETCH_CLASS,
-            "FETCH_INTO" => PDO::FETCH_INTO,
-            "FETCH_LAZY" => PDO::FETCH_LAZY,
-            "FETCH_NAMED" => PDO::FETCH_NAMED,
-            "FETCH_NUM" => PDO::FETCH_NUM,
-            "FETCH_OBJ" => PDO::FETCH_OBJ,
-            "FETCH_PROPS_LATE" => PDO::FETCH_PROPS_LATE,
-        ];
-
-
-
         /**
          * The result(s) of the sql query
          *
@@ -60,19 +44,19 @@
         /**
          * Get the results of the sql query
          *
-         * @param  integer  $fetchMode  The default fetch mode
+         * @param  string   $fetchMode  The default fetch mode
          * @param  boolean  $unique     Execute a fetch or fetchAll
-         * @return void
+         * @return mixed
          */
-        public function getResults (int $fetchMode = PDO::FETCH_BOTH, bool $unique = true)
+        public function getResults (string $fetchMode = "FETCH_BOTH", bool $unique = true)
         {
-            $fetchMode = $this->SetFetchMode($fetchMode);
+            $mode = $this->SetFetchMode($fetchMode);
 
-            if ($this->checkIntIsInArray($fetchMode, $this::FETCH_MODES_ALLOWED)) {
+            if (QueryBuilderHelpers::checkStringIsInArray($fetchMode, $this->ATTRIBUTES_DEFAULT_FETCH_MODE_ALLOWED)) {
                 if ($unique) {
-                    $this->results = $this->statement->fetch($fetchMode);
+                    $this->results = $this->statement->fetch($mode);
                 } else {
-                    $this->results = $this->statement->fetchAll($fetchMode);
+                    $this->results = $this->statement->fetchAll($mode);
                 }
             }
 
@@ -84,33 +68,19 @@
         /**
          * Set the fetch mode
          *
-         * @param  integer $fetchMode
+         * @param  string  $fetchMode
          * @return integer
          */
-        public function SetFetchMode (int $fetchMode = PDO::FETCH_BOTH) : int
+        public function SetFetchMode (string $fetchMode = "FETCH_BOTH") : int
         {
-            if (array_key_exists($fetchMode, self::FETCH_MODES_ALLOWED)) {
-                $fetchMode = self::FETCH_MODES_ALLOWED[$fetchMode];
+            $property = "ATTRIBUTES_DEFAULT_FETCH_MODE_ALLOWED";
+            
+            foreach ($this->$property as $value) {
+                if ($value === $fetchMode) {
+                    $fetchMode = constant("PDO::$value");
+                }
             }
 
             return $fetchMode;
-        }
-
-
-
-        /**
-         * Check that a value is contained in an array
-         *
-         * @param  integer  $value
-         * @param  array    $datasAllowed
-         * @return boolean
-         */
-        public static function checkIntIsInArray (int $value, array $datasAllowed) : bool
-        {
-            if (!in_array($value, $datasAllowed)) {
-                return false;
-            }
-
-            return true;
         }
     }

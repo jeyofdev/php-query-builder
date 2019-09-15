@@ -4,9 +4,9 @@
 
 
     /**
-     * Defines the helpers for the sql queries
+     * Set the helpers for the query builder
      */
-    class SyntaxHelpers
+    class QueryBuilderHelpers
     {
         /**
          * Check that a value is contained in an array

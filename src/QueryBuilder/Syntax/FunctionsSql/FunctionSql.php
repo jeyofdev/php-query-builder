@@ -4,7 +4,7 @@
 
 
     use jeyofdev\Php\Query\Builder\Exception\SyntaxFunctionSqlException;
-    use jeyofdev\Php\Query\Builder\Helpers\SyntaxHelpers;
+    use jeyofdev\Php\Query\Builder\Helpers\QueryBuilderHelpers;
 
 
     /**
@@ -77,7 +77,7 @@
          */
         private function addFunctionSql (string $functionSqlName, string $column, ?string $alias = null) : void
         {
-            if (SyntaxHelpers::checkStringIsInArray($functionSqlName, self::FUNCTION_SQL_AGGREGATE_ALLOWED)) {
+            if (QueryBuilderHelpers::checkStringIsInArray($functionSqlName, self::FUNCTION_SQL_AGGREGATE_ALLOWED)) {
                 $method = strtolower($functionSqlName);
 
                 if (!is_null($alias)) {

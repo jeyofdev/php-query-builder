@@ -3,7 +3,7 @@
 
 
     use jeyofdev\Php\Query\Builder\Exception\SyntaxHavingException;
-    use jeyofdev\Php\Query\Builder\Helpers\SyntaxHelpers;
+    use jeyofdev\Php\Query\Builder\Helpers\QueryBuilderHelpers;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Syntax\FunctionsSql\AggregateFunctionSql;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Operators\ComparisonOperators;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Operators\LogicOperators;
@@ -106,8 +106,8 @@
         {
             $functionSql = strtoupper($functionSql);
             if ($operator != null) {
-                if (!SyntaxHelpers::checkStringIsInArray($operator, self::COMPARISON_OPERATOR)) {
-                    if (!SyntaxHelpers::checkStringIsInArray($operator, self::LOGIC_OPERATOR)) {
+                if (!QueryBuilderHelpers::checkStringIsInArray($operator, self::COMPARISON_OPERATOR)) {
+                    if (!QueryBuilderHelpers::checkStringIsInArray($operator, self::LOGIC_OPERATOR)) {
                         throw new SyntaxHavingException("The 4th parameter of the having method is an operator that is not allowed");
                     }
                 }

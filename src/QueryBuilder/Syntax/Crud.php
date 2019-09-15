@@ -4,7 +4,7 @@
 
 
     use jeyofdev\Php\Query\Builder\Exception\SyntaxCrudException;
-    use jeyofdev\Php\Query\Builder\Helpers\SyntaxHelpers;
+    use jeyofdev\Php\Query\Builder\Helpers\QueryBuilderHelpers;
 
 
     /**
@@ -60,7 +60,7 @@
         {
             $crud = strtoupper($crud);
 
-            if (SyntaxHelpers::checkStringIsInArray($crud, self::CRUD_ALLOWED)) {
+            if (QueryBuilderHelpers::checkStringIsInArray($crud, self::CRUD_ALLOWED)) {
                 $this->crud = $crud;
             } else {
                 throw new SyntaxCrudException("The value of the parameter of the crud method is not allowed");
@@ -95,7 +95,7 @@
                 $option = strtoupper($option);
                 
                 if ($this->crud === "SELECT") {
-                    if (SyntaxHelpers::checkStringIsInArray($option, self::OPTIONS_SELECT)) {
+                    if (QueryBuilderHelpers::checkStringIsInArray($option, self::OPTIONS_SELECT)) {
                         if (is_null($this->option)) {
                             $this->option = $option;
                         } else {

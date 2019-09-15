@@ -4,7 +4,7 @@
 
 
     use jeyofdev\Php\Query\Builder\Exception\SyntaxJoinException;
-    use jeyofdev\Php\Query\Builder\Helpers\SyntaxHelpers;
+    use jeyofdev\Php\Query\Builder\Helpers\QueryBuilderHelpers;
 
 
     /**
@@ -77,7 +77,7 @@
         {
             $joinType = strtoupper($joinType);
 
-            if(SyntaxHelpers::checkStringIsInArray($joinType, self::JOIN_TYPES_ALLOWED)) {
+            if(QueryBuilderHelpers::checkStringIsInArray($joinType, self::JOIN_TYPES_ALLOWED)) {
                 $this->join = $joinType;
             } else {
                 throw new SyntaxJoinException("The value of the 1st parameter of the join method is not allowed");

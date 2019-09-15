@@ -4,7 +4,7 @@
 
 
     use jeyofdev\Php\Query\Builder\Exception\SyntaxWhereException;
-    use jeyofdev\Php\Query\Builder\Helpers\SyntaxHelpers;
+    use jeyofdev\Php\Query\Builder\Helpers\QueryBuilderHelpers;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Operators\ComparisonOperators;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Operators\LogicOperators;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Operators\Operators;
@@ -92,8 +92,8 @@
         private function generateCondition (string $column, $value, string $operator, ?string $logicOperator = null, bool $logicOperatorNOT = false, bool $begin = false, bool $end = false) : void
         {
             if ($operator != null) {
-                if (!SyntaxHelpers::checkStringIsInArray($operator, self::COMPARISON_OPERATOR)) {
-                    if (!SyntaxHelpers::checkStringIsInArray($operator, self::LOGIC_OPERATOR)) {
+                if (!QueryBuilderHelpers::checkStringIsInArray($operator, self::COMPARISON_OPERATOR)) {
+                    if (!QueryBuilderHelpers::checkStringIsInArray($operator, self::LOGIC_OPERATOR)) {
                         throw new SyntaxWhereException("The 3rd parameter of the where method is an operator that is not allowed");
                     }
                 }

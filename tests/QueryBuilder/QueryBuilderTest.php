@@ -715,7 +715,7 @@
             $results = $this->getBuilder()->getBuilder()
                 ->prepare($query)
                 ->execute(["id" => 5])
-                ->fetch(PDO::FETCH_OBJ);
+                ->fetch("FETCH_OBJ");
 
             $this->assertNotEmpty($results);
         }
@@ -738,7 +738,7 @@
             $results = $this->getBuilder()->getBuilder()
                 ->prepare($query)
                 ->execute(["id" => 5])
-                ->fetchAll(PDO::FETCH_OBJ);
+                ->fetchAll("FETCH_OBJ");
 
             $this->assertNotEmpty($results);
         }
@@ -773,5 +773,21 @@
         {
             $value = $this->getBuilder()->getBuilder()->quote("lorem ipsum");
             $this->assertEquals("'lorem ipsum'", $value);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testPDOSetAttribute() : void
+        {
+            $attribute = $this->getBuilder()->getBuilder()
+                ->setAttribute([
+                    "ERRMODE" => PDO::ERRMODE_EXCEPTION
+                ])
+                ->getAttribute("ERRMODE");
+
+            $this->assertEquals(2, $attribute);
         }
     }

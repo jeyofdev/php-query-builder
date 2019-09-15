@@ -4,9 +4,11 @@
 
 
     use jeyofdev\Php\Query\Builder\Database\Database;
-    use jeyofdev\Php\Query\Builder\QueryBuilder\QueryBuilder;
+use jeyofdev\Php\Query\Builder\QueryBuilder\Builder\Builder;
+use jeyofdev\Php\Query\Builder\QueryBuilder\QueryBuilder;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Syntax\Syntax;
-    use PHPUnit\Framework\TestCase;
+use PDO;
+use PHPUnit\Framework\TestCase;
 
 
     final class QueryBuilderTest extends TestCase
@@ -666,5 +668,55 @@
                 ->on("pc.category_id", "c.id")
                 ->toSQL();
             $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc RIGHT JOIN category AS c ON pc.category_id = c.id", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testFetch() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->where("id", ":id", ">")
+                ->toSql();
+            $this->assertEquals("SELECT * FROM post WHERE id > :id", $query);
+            
+
+            $pdo = $this->database->getConnection("demo");
+            $builder = new Builder($pdo);
+            $results = $builder
+                ->prepare($query)
+                ->execute(["id" => 5])
+                ->fetch(PDO::FETCH_OBJ);
+
+            $this->assertNotEmpty($results);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testFetchAll() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->where("id", ":id", ">")
+                ->toSql();
+            $this->assertEquals("SELECT * FROM post WHERE id > :id", $query);
+            
+
+            $pdo = $this->database->getConnection("demo");
+            $builder = new Builder($pdo);
+            $results = $builder
+                ->prepare($query)
+                ->execute(["id" => 5])
+                ->fetchAll(PDO::FETCH_OBJ);
+
+            $this->assertNotEmpty($results);
         }
     }

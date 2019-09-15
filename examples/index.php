@@ -1,7 +1,9 @@
 <?php
 
     use jeyofdev\Php\Query\Builder\Database\Database;
-    use jeyofdev\Php\Query\Builder\QueryBuilder\QueryBuilder;
+use jeyofdev\Php\Query\Builder\QueryBuilder\Builder\Builder;
+use jeyofdev\Php\Query\Builder\QueryBuilder\Builder\Statement;
+use jeyofdev\Php\Query\Builder\QueryBuilder\QueryBuilder;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Syntax\Syntax;
 
 
@@ -21,12 +23,17 @@
     $queryBuilder = new QueryBuilder($database, $syntax);
     $query = $queryBuilder->getSyntax()
         ->select()
-        ->columns("client")
-        ->functionSql("sum", "price", "sum_price")
-        ->table("sale")
-        ->groupBy("client")
-        ->having("sum", "price", 30, ">")
-
+        ->table("post")
+        ->where("id", ":id", ">")
         ->toSql();
 
-    dump($query);
+
+    $pdo = $database->getConnection("demo");
+    $builder = new Builder($pdo);
+
+    $results = $builder
+        ->prepare($query)
+        ->execute(["id" => 5])
+        ->fetchAll(PDO::FETCH_OBJ);
+
+    dump($results);

@@ -18,7 +18,7 @@
         name VARCHAR(255) NOT NULL,
         slug VARCHAR(255) NOT NULL,
         content TEXT(650000) NOT NULL,
-        created_at DATETIME NOT NULL,
+        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (id)
     )
     ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
@@ -54,7 +54,7 @@
 
 
     // Define the table "sale"
-    $postTable = "CREATE TABLE IF NOT EXISTS sale (
+    $saleTable = "CREATE TABLE IF NOT EXISTS sale (
         id INT UNSIGNED NOT NULL AUTO_INCREMENT,
         client VARCHAR(255) NOT NULL,
         price VARCHAR(255) NOT NULL,
@@ -68,4 +68,5 @@
     $database
         ->addTable($postTable)
         ->addTable($categoryTable)
-        ->addTable($joinTable);
+        ->addTable($joinTable)
+        ->addTable($saleTable);

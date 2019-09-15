@@ -719,4 +719,41 @@ use PHPUnit\Framework\TestCase;
 
             $this->assertNotEmpty($results);
         }
+
+
+
+        /**
+         * @test
+         */
+        public function testFetchLastInsertId() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->select()
+                ->table("post")
+                ->where("id", ":id", ">")
+                ->toSql();
+            $this->assertEquals("SELECT * FROM post WHERE id > :id", $query);
+            
+
+            $pdo = $this->database->getConnection("demo");
+            $builder = new Builder($pdo);
+            $results = $builder
+                ->lastInsertId();
+
+            $this->assertNotNull($results);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testPDOQuote() : void
+        {
+            $this->getBuilder();
+            $pdo = $this->database->getConnection("demo");
+            $builder = new Builder($pdo);
+            $value = $builder->quote("lorem ipsum");
+            $this->assertEquals("'lorem ipsum'", $value);
+        }
     }

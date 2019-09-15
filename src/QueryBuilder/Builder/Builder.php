@@ -146,4 +146,29 @@
 
             return $this->results;
         }
+
+
+
+        /**
+         * Get the id of the last record
+         *
+         * @return integer
+         */
+        public function lastInsertId () : int
+        {
+            return (int)$this->pdo->lastInsertId();
+        }
+
+
+
+        /**
+         * Quotes a string for use in a query
+         *
+         * @param string $string
+         * @return void
+         */
+        public function quote (string $string)
+        {
+            return $this->pdo->quote($string);
+        }
     }

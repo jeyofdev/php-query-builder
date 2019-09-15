@@ -23,8 +23,12 @@ use jeyofdev\Php\Query\Builder\QueryBuilder\QueryBuilder;
     $queryBuilder = new QueryBuilder($database, $syntax);
     $query = $queryBuilder->getSyntax()
         ->select()
-        ->table("post")
-        ->where("id", ":id", ">")
+        ->table(" post")
+        ->columns([
+            "name" => ":name",
+            "slug" => ":slug",
+            "content" => ":content"
+        ])
         ->toSql();
 
 
@@ -33,7 +37,12 @@ use jeyofdev\Php\Query\Builder\QueryBuilder\QueryBuilder;
 
     $results = $builder
         ->prepare($query)
-        ->execute(["id" => 5])
-        ->fetchAll(PDO::FETCH_OBJ);
+        ->execute([
+            "name" => "lorem ipsum",
+            "slug" => "lorem-ipsum",
+            "content" => "Exercitationem veniam laboriosam dicta eius eos. V..."
+        ])
+        ->lastInsertId();
 
     dump($results);
+    dump($builder->quote("test"));

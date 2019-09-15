@@ -683,6 +683,25 @@
         /**
          * @test
          */
+        public function testExec() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->delete()
+                ->table("post")
+                ->where("id", 10, ">")
+                ->toSql();
+            $this->assertEquals("DELETE FROM post WHERE id > 10", $query);
+            
+
+            $result = $this->getBuilder()->getBuilder()->exec($query);
+            $this->assertGreaterThanOrEqual(0, $result);
+        }
+
+
+
+        /**
+         * @test
+         */
         public function testFetch() : void
         {
             $query = $this->getBuilder()->getSyntax()

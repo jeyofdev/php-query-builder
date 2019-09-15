@@ -22,13 +22,12 @@
 
     // Generate the query
     $query = $queryBuilder->getSyntax()
-        ->select()
-        ->table(" post")
-        ->where("id", [5, 10], "BETWEEN")
+        ->delete()
+        ->table("post")
+        ->where("id", 10, ">")
         ->toSql();
 
     $results = $builder
-        ->query($query)
-        ->fetchAll();
+        ->exec($query);
 
     dump($results);

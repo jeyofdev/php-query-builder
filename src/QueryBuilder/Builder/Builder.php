@@ -102,6 +102,22 @@
 
 
         /**
+         * Execute an SQL statement and return the number of affected rows
+         *
+         * @param  string  $query
+         * @return integer
+         */
+        public function exec (string $query) : int
+        {
+            $this->query = $query;
+            $this->statement = $this->pdo->exec($this->query);
+
+            return $this->statement;
+        }
+
+
+
+        /**
          * Executes a prepared statement
          *
          * @param  array  $params  The values ​​of the sql query parameters

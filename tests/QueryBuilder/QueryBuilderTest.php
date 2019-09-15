@@ -4,11 +4,11 @@
 
 
     use jeyofdev\Php\Query\Builder\Database\Database;
-use jeyofdev\Php\Query\Builder\QueryBuilder\Builder\Builder;
-use jeyofdev\Php\Query\Builder\QueryBuilder\QueryBuilder;
+    use jeyofdev\Php\Query\Builder\QueryBuilder\Builder\Builder;
+    use jeyofdev\Php\Query\Builder\QueryBuilder\QueryBuilder;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Syntax\Syntax;
-use PDO;
-use PHPUnit\Framework\TestCase;
+    use PDO;
+    use PHPUnit\Framework\TestCase;
 
 
     final class QueryBuilderTest extends TestCase
@@ -28,6 +28,13 @@ use PHPUnit\Framework\TestCase;
 
 
         /**
+         * @var Builder
+         */
+        private $builder;
+
+
+
+        /**
          * Get an instance of the query builder
          *
          * @return QueryBuilder
@@ -36,8 +43,9 @@ use PHPUnit\Framework\TestCase;
         {
             $this->database = new Database("localhost", "root", "root", "demo");
             $this->syntax = new Syntax();
+            $this->builder = new Builder($this->database->getConnection("demo"));
 
-            return new QueryBuilder($this->database, $this->syntax);
+            return new QueryBuilder($this->database, $this->syntax, $this->builder);
         }
 
 
@@ -685,9 +693,7 @@ use PHPUnit\Framework\TestCase;
             $this->assertEquals("SELECT * FROM post WHERE id > :id", $query);
             
 
-            $pdo = $this->database->getConnection("demo");
-            $builder = new Builder($pdo);
-            $results = $builder
+            $results = $this->getBuilder()->getBuilder()
                 ->prepare($query)
                 ->execute(["id" => 5])
                 ->fetch(PDO::FETCH_OBJ);
@@ -710,9 +716,7 @@ use PHPUnit\Framework\TestCase;
             $this->assertEquals("SELECT * FROM post WHERE id > :id", $query);
             
 
-            $pdo = $this->database->getConnection("demo");
-            $builder = new Builder($pdo);
-            $results = $builder
+            $results = $this->getBuilder()->getBuilder()
                 ->prepare($query)
                 ->execute(["id" => 5])
                 ->fetchAll(PDO::FETCH_OBJ);
@@ -735,9 +739,7 @@ use PHPUnit\Framework\TestCase;
             $this->assertEquals("SELECT * FROM post WHERE id > :id", $query);
             
 
-            $pdo = $this->database->getConnection("demo");
-            $builder = new Builder($pdo);
-            $results = $builder
+            $results = $this->getBuilder()->getBuilder()
                 ->lastInsertId();
 
             $this->assertNotNull($results);
@@ -750,10 +752,7 @@ use PHPUnit\Framework\TestCase;
          */
         public function testPDOQuote() : void
         {
-            $this->getBuilder();
-            $pdo = $this->database->getConnection("demo");
-            $builder = new Builder($pdo);
-            $value = $builder->quote("lorem ipsum");
+            $value = $this->getBuilder()->getBuilder()->quote("lorem ipsum");
             $this->assertEquals("'lorem ipsum'", $value);
         }
     }

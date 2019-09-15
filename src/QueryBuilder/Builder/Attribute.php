@@ -3,14 +3,14 @@
 
 
     use jeyofdev\Php\Query\Builder\Helpers\QueryBuilderHelpers;
-    use jeyofdev\Php\Query\Builder\QueryBuilder\Attributes\AttributesAbstract;
+    use jeyofdev\Php\Query\Builder\QueryBuilder\Attributes\AbstractAttributes;
     use PDO;
 
 
     /**
      * Manage The attributes of PDO
      */
-    class Attribute extends AttributesAbstract
+    class Attribute extends AbstractAttributes
     {
         /**
          * @var PDO

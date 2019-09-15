@@ -223,4 +223,16 @@
         {
             return $this->pdo->quote($string);
         }
+
+
+
+        /**
+         * Returns the number of rows affected by the SQL statement
+         *
+         * @return integer
+         */
+        public function rowCount () : int
+        {
+            return $this->statement->rowCount();
+        }
     }

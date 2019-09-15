@@ -19,23 +19,16 @@
     $builder = new Builder($database->getConnection("demo"));
     $queryBuilder = new QueryBuilder($database, $syntax, $builder);
 
-    $builder->setAttribute([
-        "DEFAULT_FETCH_MODE" => PDO::FETCH_OBJ,
-        "ERRMODE" => PDO::ERRMODE_EXCEPTION,
-        "CASE" => PDO::CASE_LOWER
-    ]);
-
-    dump($builder->getAttribute("DEFAULT_FETCH_MODE"));
-    dump($builder->getAttribute("ERRMODE"));
 
     // Generate the query
     $query = $queryBuilder->getSyntax()
         ->select()
         ->table("post")
-        ->where("id", 5, ">")
+        ->where("id", ":id", ">")
         ->toSql();
 
     $results = $builder
-        ->query($query)
+        ->prepare($query)
+        ->execute(["id" => 5])
         ->fetchAll();
     dump($results);

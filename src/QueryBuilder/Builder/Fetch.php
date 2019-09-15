@@ -4,14 +4,14 @@
 
 
     use jeyofdev\Php\Query\Builder\Helpers\QueryBuilderHelpers;
-    use jeyofdev\Php\Query\Builder\QueryBuilder\Attributes\AttributesAbstract;
+    use jeyofdev\Php\Query\Builder\QueryBuilder\Attributes\AbstractAttributes;
     use PDOStatement;
 
 
     /**
      * Manage the results of a sql query
      */
-    class Fetch extends AttributesAbstract
+    class Fetch extends AbstractAttributes
     {
         /**
          * The result(s) of the sql query

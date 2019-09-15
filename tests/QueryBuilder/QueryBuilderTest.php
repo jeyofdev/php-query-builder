@@ -780,6 +780,28 @@
         /**
          * @test
          */
+        public function testRowCount() : void
+        {
+            $query = $this->getBuilder()->getSyntax()
+                ->delete()
+                ->table("post")
+                ->where("id", ":id", ">")
+                ->toSql();
+            $this->assertEquals("DELETE FROM post WHERE id > :id", $query);
+            
+            $count = $this->getBuilder()->getBuilder()
+                ->prepare($query)
+                ->execute(["id" => 8])
+                ->rowCount();
+
+                $this->assertGreaterThanOrEqual(0, $count);
+        }
+
+
+
+        /**
+         * @test
+         */
         public function testPDOSetAttribute() : void
         {
             $attribute = $this->getBuilder()->getBuilder()

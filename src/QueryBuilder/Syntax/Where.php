@@ -5,15 +5,15 @@
 
     use jeyofdev\Php\Query\Builder\Exception\SyntaxWhereException;
     use jeyofdev\Php\Query\Builder\Helpers\QueryBuilderHelpers;
+    use jeyofdev\Php\Query\Builder\QueryBuilder\Operators\AbstractOperators;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Operators\ComparisonOperators;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Operators\LogicOperators;
-    use jeyofdev\Php\Query\Builder\QueryBuilder\Operators\Operators;
 
 
     /**
      * Manage the condition of SQL queries
      */
-    class Where extends Operators
+    class Where extends AbstractOperators
     {
         /**
          * @var ComparisonOperators

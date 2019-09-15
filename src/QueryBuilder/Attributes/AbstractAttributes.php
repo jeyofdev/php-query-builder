@@ -7,7 +7,7 @@
     /**
      * Manage the PDO attributes values
      */
-    abstract class AttributesAbstract
+    abstract class AbstractAttributes
     {
         /**
          * List of allowed attributes

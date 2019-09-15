@@ -9,7 +9,7 @@
     /**
      * Manage the comparison operators
      */
-    class LogicOperators extends Operators
+    class LogicOperators extends AbstractOperators
     {
         /**
          * The logic operator of the current condition

@@ -28,8 +28,6 @@
 
 
         /**
-         * Undocumented variable
-         *
          * @var Builder
          */
         private $builder;
@@ -70,5 +68,6 @@
         public function getBuilder () : Builder
         {
             return $this->builder;
+
         }
     }

@@ -22,13 +22,11 @@
 
     // Generate the query
     $query = $queryBuilder->getSyntax()
-        ->delete()
+        ->select()
         ->table("post")
-        ->where("id", ":id", ">")
         ->toSql();
 
     $results = $builder
-        ->prepare($query)
-        ->execute(["id" => 8])
-        ->rowCount();
+        ->query($query)
+        ->fetchAll();
     dump($results);

@@ -15,77 +15,77 @@
         /**
          * @var Crud
          */
-        private $crud;
+        private static $crud;
 
 
 
         /**
          * @var Columns
          */
-        private $columns;
+        private static $columns;
 
 
 
         /**
          * @var AggregateFunctionSql
          */
-        private $aggregateFunctionSql;
+        private static $aggregateFunctionSql;
 
 
 
         /**
          * @var Table
          */
-        private $table;
+        private static $table;
 
 
 
         /**
          * @var Join
          */
-        private $join;
+        private static $join;
 
 
 
         /**
          * @var Where;
          */
-        private $where;
+        private static $where;
 
 
 
         /**
          * @var GroupBy
          */
-        private $groupBy;
+        private static $groupBy;
 
 
 
         /**
          * @var Having
          */
-        private $having;
+        private static $having;
 
 
 
         /**
          * @var OrderBy
          */
-        private $orderBy;
+        private static $orderBy;
 
 
 
         /**
          * @var Limit
          */
-        private $limit;
+        private static $limit;
 
 
 
         /**
          * @var Offset
          */
-        private $offset;
+        private static $offset;
 
 
 
@@ -94,7 +94,7 @@
          *
          * @var array
          */
-        private $sqlParts = [];
+        private static $sqlParts = [];
 
 
 
@@ -103,7 +103,7 @@
          *
          * @var string
          */
-        private $sql;
+        private static $sql;
 
 
 
@@ -111,12 +111,11 @@
          * Initialize a sql query of type SELECT
          *
          * @param  array ...$options
-         * @return self
+         * @return void
          */
-        public function select (...$options) : self
+        public static function select (...$options) : void
         {
-            $this->getCrud("SELECT", $options);
-            return $this;
+            self::getCrud("SELECT", $options);
         }
 
 
@@ -125,12 +124,11 @@
          * Initialize a sql query of type INSERT INTO
          *
          * @param  array ...$options
-         * @return self
+         * @return void
          */
-        public function insert (...$options) : self
+        public static function insert (...$options) : void
         {
-            $this->getCrud("INSERT INTO", $options);
-            return $this;
+            self::getCrud("INSERT INTO", $options);
         }
 
 
@@ -139,12 +137,11 @@
          * Initialize a sql query of type UPDATE
          *
          * @param  array ...$options
-         * @return self
+         * @return void
          */
-        public function update (...$options) : self
+        public static function update (...$options) : void
         {
-            $this->getCrud("UPDATE", $options);
-            return $this;
+            self::getCrud("UPDATE", $options);
         }
 
 
@@ -153,12 +150,11 @@
          * Initialize a sql query of type DELETE
          *
          * @param  array ...$options
-         * @return self
+         * @return void
          */
-        public function delete (...$options) : self
+        public static function delete (...$options) : void
         {
-            $this->getCrud("DELETE", $options);
-            return $this;
+            self::getCrud("DELETE", $options);
         }
 
 
@@ -167,24 +163,22 @@
          * Set the columns to use in the sql query
          *
          * @param  mixed  ...$columns
-         * @return self
+         * @return void
          */
-        public function columns (...$columns) : self
+        public static function columns (...$columns) : void
         {
-            $this->columns = new Columns();
+            self::$columns = new Columns();
 
-            $this->checkMethodIsCalled("crud");
+            self::checkMethodIsCalled("crud");
 
-            if ($this->crud->getCrud() === "INSERT INTO" || $this->crud->getCrud() === "UPDATE") {
-                $this->columns->setColumnsWithClauseSET($columns);
+            if (self::$crud->getCrud() === "INSERT INTO" || self::$crud->getCrud() === "UPDATE") {
+                self::$columns->setColumnsWithClauseSET($columns);
             } else {
-                $this->columns->setColumns($columns);
+                self::$columns->setColumns($columns);
             }
 
-            $columns = $this->columns->getColumns();
-            $this->sqlParts[__FUNCTION__] = $columns;
-
-            return $this;
+            $columns = self::$columns->getColumns();
+            self::$sqlParts[__FUNCTION__] = $columns;
         }
 
 
@@ -195,20 +189,18 @@
          * @param  string       $functionSql  The sql function 
          * @param  string       $columns      The column of the table  
          * @param  string|null  $alias        The alias of the sql function
-         * @return self
+         * @return void
          */
-        public function functionSql (string $functionSql, string $columns, ?string $alias = null) : self
+        public static function functionSql (string $functionSql, string $columns, ?string $alias = null) : void
         {
-            if (is_null($this->aggregateFunctionSql)) {
-                $this->aggregateFunctionSql = new AggregateFunctionSql();
+            if (is_null(self::$aggregateFunctionSql)) {
+                self::$aggregateFunctionSql = new AggregateFunctionSql();
             }
 
-            $this->aggregateFunctionSql->setFunctionSql($functionSql, $columns, $alias);
-            $function = $this->aggregateFunctionSql->getFunctionSql();
+            self::$aggregateFunctionSql->setFunctionSql($functionSql, $columns, $alias);
+            $function = self::$aggregateFunctionSql->getFunctionSql();
 
-            $this->sqlParts[__FUNCTION__] = $function;
-
-            return $this;
+            self::$sqlParts[__FUNCTION__] = $function;
         }
 
 
@@ -218,24 +210,63 @@
          *
          * @param  string      $tableName
          * @param  string|null $alias
-         * @return self
+         * @return void
          */
-        public function table (string $tableName, ?string $alias = null) : self
+        public static function table (string $tableName, ?string $alias = null) : void
         {
-            $this->table = new Table();
+            self::$table = new Table();
 
-            $this->checkMethodIsCalled("crud");
-            $this->table->setTable($tableName, $alias);
+            self::checkMethodIsCalled("crud");
+            self::$table->setTable($tableName, $alias);
             
-            if ($this->crud->getCrud() === "SELECT" || $this->crud->getCrud() === "DELETE") {
-                $table = "FROM {$this->table->getTable()}";
+            if (self::$crud->getCrud() === "SELECT" || self::$crud->getCrud() === "DELETE") {
+                $table = "FROM " . self::$table->getTable();
             } else {
-                $table = $this->table->getTable();
+                $table = self::$table->getTable();
             }
 
-            $this->sqlParts[__FUNCTION__] = $table;
+            self::$sqlParts[__FUNCTION__] = $table;
+        }
 
-            return $this;
+
+
+        /**
+         * Set the join between 2 tables in a sql query
+         *
+         * @param  string      $joinType   The type of join
+         * @param  string      $joinTable  The join table
+         * @param  string|null $joinAlias  The alias of the join table
+         * @return void
+         */
+        public static function join (string $joinType, string $joinTable, ?string $joinAlias = null) : void
+        {
+            self::$join = new Join();
+
+            self::$join->setJoin($joinType, $joinTable, $joinAlias);
+            $join = self::$join->getJoin();
+
+            self::$sqlParts[__FUNCTION__] = " {$join}";
+        }
+
+
+
+        /**
+         * Set the columns that serve as a join between the 2 tables in a sql query
+         *
+         * @param  string  $relationA  The column that serve as a join of the table A
+         * @param  string  $relationB  The column that serve as a join of the table B
+         * @return void
+         */
+        public static function on (string $relationA, string $relationB) : void
+        {
+            if (!is_null(self::$join)) {
+                self::$join->setOn($relationA, $relationB);
+
+                $on = self::$join->getOn();
+                self::$sqlParts[__FUNCTION__] = " ON {$on}";
+            } else {
+                throw new SyntaxException("join");
+            }
         }
 
 
@@ -250,20 +281,18 @@
          * @param  boolean     $logicOperatorNOT  The Logic Operator NOT if necessary
          * @param  boolean     $begin             Activate the opening parenthesis
          * @param  boolean     $end               Activate the closing parenthesis       
-         * @return self
+         * @return void
          */
-        public function where (string $column, $value, string $operator, ?string $logicOperator = null, bool $logicOperatorNOT = false, bool $begin = false, bool $end = false) : self
+        public static function where (string $column, $value, string $operator, ?string $logicOperator = null, bool $logicOperatorNOT = false, bool $begin = false, bool $end = false) : void
         {
-            if (is_null($this->where)) {
-                $this->where = new Where();
+            if (is_null(self::$where)) {
+                self::$where = new Where();
             }
 
-            $this->where->setCondition($column, $value, $operator, $logicOperator, $logicOperatorNOT, $begin, $end);
-            $condition = $this->where->getCondition();
+            self::$where->setCondition($column, $value, $operator, $logicOperator, $logicOperatorNOT, $begin, $end);
+            $condition = self::$where->getCondition();
 
-            $this->sqlParts[__FUNCTION__] = " WHERE {$condition}";
-
-            return $this;
+            self::$sqlParts[__FUNCTION__] = " WHERE {$condition}";
         }
 
 
@@ -273,22 +302,20 @@
          *
          * @param  string   $column  The column that groups the results of sql functions
          * @param  boolean  $rollup  Enable the rollup option
-         * @return self
+         * @return void
          */
-        public function groupBy (string $column, bool $rollup = false) : self
+        public static function groupBy (string $column, bool $rollup = false) : void
         {
-            $this->groupBy = new GroupBy();
+            self::$groupBy = new GroupBy();
 
-            $this->groupBy->setGroupBy($column);
-            $groupBy = $this->groupBy->getGroupBy();
+            self::$groupBy->setGroupBy($column);
+            $groupBy = self::$groupBy->getGroupBy();
 
-            $this->sqlParts[__FUNCTION__] = " GROUP BY {$groupBy}";
+            self::$sqlParts[__FUNCTION__] = " GROUP BY {$groupBy}";
 
             if ($rollup) {
-                $this->sqlParts[__FUNCTION__] .= " WITH ROLLUP";
+                self::$sqlParts[__FUNCTION__] .= " WITH ROLLUP";
             }
-
-            return $this;
         }
 
 
@@ -304,24 +331,22 @@
          * @param  boolean     $logicOperatorNOT  The Logic Operator NOT if necessary
          * @param  boolean     $begin             Activate the opening parenthesis
          * @param  boolean     $end               Activate the closing parenthesis       
-         * @return self
+         * @return void
          */
-        public function having (string $functionSql, string $column, $value, string $operator, ?string $logicOperator = null, bool $logicOperatorNOT = false, bool $begin = false, bool $end = false) : self
+        public static function having (string $functionSql, string $column, $value, string $operator, ?string $logicOperator = null, bool $logicOperatorNOT = false, bool $begin = false, bool $end = false) : void
         {
-            if (is_null($this->aggregateFunctionSql)) {
-                $this->aggregateFunctionSql = new AggregateFunctionSql();
+            if (is_null(self::$aggregateFunctionSql)) {
+                self::$aggregateFunctionSql = new AggregateFunctionSql();
             }
 
-            if (is_null($this->having)) {
-                $this->having = new Having($this->aggregateFunctionSql);
+            if (is_null(self::$having)) {
+                self::$having = new Having(self::$aggregateFunctionSql);
             }
 
-            $this->having->setHaving($functionSql, $column, $value, $operator, $logicOperator, $logicOperatorNOT, $begin, $end);
-            $having = $this->having->getHaving();
+            self::$having->setHaving($functionSql, $column, $value, $operator, $logicOperator, $logicOperatorNOT, $begin, $end);
+            $having = self::$having->getHaving();
 
-            $this->sqlParts[__FUNCTION__] = " HAVING {$having}";
-
-            return $this;
+            self::$sqlParts[__FUNCTION__] = " HAVING {$having}";
         }
 
 
@@ -331,20 +356,18 @@
          *
          * @param  string|array $column    The column of the table
          * @param  string|null  $direction The direction (ASC or DESC)
-         * @return self
+         * @return void
          */
-        public function orderBy ($column, ?string $direction = "ASC") : self
+        public static function orderBy ($column, ?string $direction = "ASC") : void
         {
-            if (is_null($this->orderBy)) {
-                $this->orderBy = new OrderBy();
+            if (is_null(self::$orderBy)) {
+                self::$orderBy = new OrderBy();
             }
 
-            $this->orderBy->setColumnAndDirection($column, $direction);
-            $orderBy = $this->orderBy->getColumnAndDirection();
+            self::$orderBy->setColumnAndDirection($column, $direction);
+            $orderBy = self::$orderBy->getColumnAndDirection();
 
-            $this->sqlParts[__FUNCTION__] = " ORDER BY {$orderBy}";
-
-            return $this;
+            self::$sqlParts[__FUNCTION__] = " ORDER BY {$orderBy}";
         }
 
 
@@ -352,18 +375,16 @@
         /**
          * Set the "LIMIT" command in the sql query
          * @param  integer $limit
-         * @return self
+         * @return void
          */
-        public function limit (int $limit) : self
+        public static function limit (int $limit) : void
         {
-            $this->limit = new Limit();
+            self::$limit = new Limit();
 
-            $this->limit->setLimit($limit);
-            $limit = ($this->limit->getLimit() > 0) ? $this->limit->getLimit() : null;
+            self::$limit->setLimit($limit);
+            $limit = (self::$limit->getLimit() > 0) ? self::$limit->getLimit() : null;
 
-            $this->sqlParts[__FUNCTION__] = $limit ? " LIMIT {$limit}" : null;
-
-            return $this;
+            self::$sqlParts[__FUNCTION__] = $limit ? " LIMIT {$limit}" : null;
         }
 
 
@@ -372,22 +393,20 @@
          * Set the "OFFSET" command in the sql query
          *
          * @param  integer $offset
-         * @return self
+         * @return void
          */
-        public function offset (int $offset) : self
+        public static function offset (int $offset) : void
         {
-            $this->offset = new Offset();
+            self::$offset = new Offset();
 
-            $this->offset->setOffset($offset);
+            self::$offset->setOffset($offset);
 
-            if ($this->offset->getOffset() > 0) {
-                if ($this->offset->checkThatLimitIsGreaterThanZero($this->limit->getLimit())) {
-                    $offset = $this->offset->getOffset();
-                    $this->sqlParts[__FUNCTION__] = " OFFSET {$offset}";
+            if (self::$offset->getOffset() > 0) {
+                if (self::$offset->checkThatLimitIsGreaterThanZero(self::$limit->getLimit())) {
+                    $offset = self::$offset->getOffset();
+                    self::$sqlParts[__FUNCTION__] = " OFFSET {$offset}";
                 }
             }
-
-            return $this;
         }
 
 
@@ -396,60 +415,15 @@
          * Set the OFFSET command corresponding to a page in the sql query
          *
          * @param  integer $page
-         * @return self
+         * @return void
          */
-        public function page (int $page) : self
+        public static function page (int $page) : void
         {
-            $this->offset = new Offset();
+            self::$offset = new Offset();
             
-            if ($this->offset->checkThatLimitIsGreaterThanZero($this->limit->getLimit())) {
-                return $this->offset($this->limit->getLimit() * ($page - 1));
+            if (self::$offset->checkThatLimitIsGreaterThanZero(self::$limit->getLimit())) {
+                self::offset(self::$limit->getLimit() * ($page - 1));
             }
-        }
-
-
-
-        /**
-         * Set the join between 2 tables in a sql query
-         *
-         * @param  string      $joinType   The type of join
-         * @param  string      $joinTable  The join table
-         * @param  string|null $joinAlias  The alias of the join table
-         * @return self
-         */
-        public function join (string $joinType, string $joinTable, ?string $joinAlias = null) : self
-        {
-            $this->join = new Join();
-
-            $this->join->setJoin($joinType, $joinTable, $joinAlias);
-            $join = $this->join->getJoin();
-
-            $this->sqlParts[__FUNCTION__] = " {$join}";
-
-            return $this;
-        }
-
-
-
-        /**
-         * Set the columns that serve as a join between the 2 tables in a sql query
-         *
-         * @param  string  $relationA  The column that serve as a join of the table A
-         * @param  string  $relationB  The column that serve as a join of the table B
-         * @return self
-         */
-        public function on (string $relationA, string $relationB) : self
-        {
-            if (!is_null($this->join)) {
-                $this->join->setOn($relationA, $relationB);
-
-                $on = $this->join->getOn();
-                $this->sqlParts[__FUNCTION__] = " ON {$on}";
-            } else {
-                throw new SyntaxException("join");
-            }
-
-            return $this;
         }
 
 
@@ -459,37 +433,37 @@
          *
          * @return string
          */
-        public function toSql () : string
+        public static function toSql () : string
         {
             list($functionSql, $join, $on, $where, $groupBy, $having, $orderBy, $limit, $offset) = null;
 
             $columns = "*";
 
-            $this->checkMethodIsCalled("crud");
-            extract($this->sqlParts);
+            self::checkMethodIsCalled("crud");
+            extract(self::$sqlParts);
 
-            if (($this->crud->getCrud() === "INSERT INTO") || ($this->crud->getCrud() === "UPDATE")) {
-                $this->checkMethodIsCalled("columns", "table");
-                $this->sql = "$crud $table $columns";
-            } if ($this->crud->getCrud() === "UPDATE") {
-                $this->sql .= $where;
-            }else if ($this->crud->getCrud() === "SELECT") {
-                $this->checkMethodIsCalled("table");
+            if ((self::$crud->getCrud() === "INSERT INTO") || (self::$crud->getCrud() === "UPDATE")) {
+                self::checkMethodIsCalled("columns", "table");
+                self::$sql = "$crud $table $columns";
+            } if (self::$crud->getCrud() === "UPDATE") {
+                self::$sql .= $where;
+            }else if (self::$crud->getCrud() === "SELECT") {
+                self::checkMethodIsCalled("table");
                 
                 if (!is_null($functionSql)) {
                     $columns = "$columns, $functionSql";
                 }
 
                 if (isset($columns)) {
-                    $this->sql = "$crud $columns $table" .  $join . $on . $where . $groupBy . $having . $orderBy . $limit . $offset;
+                    self::$sql = "$crud $columns $table" .  $join . $on . $where . $groupBy . $having . $orderBy . $limit . $offset;
                 } else {
-                    $this->sql = "$crud $table";
+                    self::$sql = "$crud $table";
                 }
-            } else if ($this->crud->getCrud() === "DELETE") {
-                $this->sql = "$crud $table" . $where;
+            } else if (self::$crud->getCrud() === "DELETE") {
+                self::$sql = "$crud $table" . $where;
             }
 
-            return $this->sql;
+            return self::$sql;
         }
 
 
@@ -500,31 +474,31 @@
          * @param  array  ...$options  DISTINCT, SQL_CACHE, SQL_NO_CACHE...
          * @return void
          */
-        private function getCrud (string $crud, ...$options) : void
+        private static function getCrud (string $crud, ...$options) : void
         {
-            $this->crud = new Crud();
+            self::$crud = new Crud();
 
-            $this->crud->setCrud($crud);
-            $this->crud->setOption($options);
+            self::$crud->setCrud($crud);
+            self::$crud->setOption($options);
 
-            $crud = $this->crud->getCrud();
-            $options = $this->crud->getOption();
+            $crud = self::$crud->getCrud();
+            $options = self::$crud->getOption();
 
-            $this->sqlParts["crud"] = !is_null($options) ? "$crud $options" : $crud;
+            self::$sqlParts["crud"] = !is_null($options) ? "$crud $options" : $crud;
         }
 
 
 
         /**
-         * check if a method is called
+         * Check if a method is called
          *
          * @param  string  ...$methods
          * @return void
          */
-        private function checkMethodIsCalled (string ...$methods)
+        private static function checkMethodIsCalled (string ...$methods) : void
         {
             foreach ($methods as $method) {
-                if (!array_key_exists($method, $this->sqlParts)) {
+                if (!array_key_exists($method, self::$sqlParts)) {
                     throw new SyntaxException($method);
                 }
             }

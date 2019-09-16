@@ -1,34 +1,29 @@
 <?php
 
     use jeyofdev\Php\Query\Builder\Database\Database;
-    use jeyofdev\Php\Query\Builder\QueryBuilder\Builder\Builder;
     use jeyofdev\Php\Query\Builder\QueryBuilder\QueryBuilder;
-    use jeyofdev\Php\Query\Builder\QueryBuilder\Syntax\Syntax;
 
 
     // Autoloader
     require dirname(__DIR__) . '/vendor/autoload.php';
 
 
-    // Connexion to the database
+    // Initialize the query builder
     $database = new Database("localhost", "root", "root", "demo");
-
-
-    // Instance that we need
-    $syntax = new Syntax();
-    $builder = new Builder($database->getConnection("demo"));
-    $queryBuilder = new QueryBuilder($database, $syntax, $builder);
+    $queryBuilder = new QueryBuilder($database);
 
 
     // Generate the query
-    $query = $queryBuilder->getSyntax()
+    $query = $queryBuilder
         ->select()
+        ->columns("id", "name")
         ->table("post")
-        ->where("id", ":id", ">")
-        ->toSql();
+        ->limit(5)
+        ->page(4)
+        ->toSQL();
+    dump($query);
 
-    $results = $builder
-        ->prepare($query)
-        ->execute(["id" => 5])
-        ->fetchAll();
+    $results = $queryBuilder
+        ->query($query)
+        ->fetchAll("FETCH_OBJ");
     dump($results);

@@ -16,12 +16,10 @@
     // Generate the query
     $query = $queryBuilder
         ->select()
-        ->columns("id", "name")
-        ->table("post")
-        ->limit(5)
-        ->page(4)
+        ->table("sale")
         ->toSQL();
     dump($query);
+
 
     $results = $queryBuilder
         ->query($query)

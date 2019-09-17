@@ -78,6 +78,18 @@
 
 
         /**
+         * Empty the condition
+         *
+         * @return void
+         */
+        public function empty () : void
+        {
+            $this->condition = null;
+        }
+
+
+
+        /**
          * Generate a condition
          *
          * @param  string            $column            The column of the table  

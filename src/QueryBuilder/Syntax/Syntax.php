@@ -447,9 +447,9 @@
                 self::$sql = "$crud $table $columns";
             } if (self::$crud->getCrud() === "UPDATE") {
                 self::$sql .= $where;
-            }else if (self::$crud->getCrud() === "SELECT") {
+            } else if (self::$crud->getCrud() === "SELECT") {
                 self::checkMethodIsCalled("table");
-                
+
                 if (!is_null($functionSql)) {
                     $columns = "$columns, $functionSql";
                 }
@@ -462,6 +462,13 @@
             } else if (self::$crud->getCrud() === "DELETE") {
                 self::$sql = "$crud $table" . $where;
             }
+
+            self::$sqlParts = [];
+            
+            if (!is_null($where)) self::$where->empty();
+            if (!is_null($columns)) $columns = null;
+            if (!is_null($functionSql)) self::$aggregateFunctionSql->empty();
+            if (!is_null($having)) self::$having->empty();
 
             return self::$sql;
         }

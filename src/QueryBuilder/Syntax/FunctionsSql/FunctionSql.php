@@ -68,6 +68,19 @@
 
 
         /**
+         * Empty the sql functions
+         *
+         * @return void
+         */
+        public function empty () : void
+        {
+            $this->functionSql = null;
+            $this->functionSqlParts = [];
+        }
+
+
+
+        /**
          * Add a sql function
          *
          * @param string       $functionSqlName  The sql function 

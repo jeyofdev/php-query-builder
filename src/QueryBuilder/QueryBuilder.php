@@ -291,6 +291,33 @@
 
 
         /**
+         * Get the value of an attribute
+         *
+         * @param  string  $attribute
+         * @return int
+         */
+        public function getAttribute (string $attribute) : int
+        {
+            return Builder::getAttribute($attribute);
+        }
+
+
+
+        /**
+         * Set the value of an attribute
+         *
+         * @param  array  $attributes
+         * @return self
+         */
+        public function setAttribute (array $attributes = []) : self
+        {
+            Builder::setAttribute($attributes);
+            return $this;
+        }
+
+
+
+        /**
          * Executes an SQL statement with the PDO::query method
          *
          * @param  string  $query  The sql query

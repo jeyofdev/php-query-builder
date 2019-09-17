@@ -90,6 +90,18 @@
 
 
         /**
+         * Empty the HAVING clause
+         *
+         * @return void
+         */
+        public function empty () : void
+        {
+            $this->having = null;
+        }
+
+
+
+        /**
          * Generate the HAVING clause
          *
          * @param  string            $functionSql       The sql function

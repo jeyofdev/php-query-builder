@@ -107,5 +107,18 @@
                 }
             }
         }
+
+
+
+        /**
+         * Empty the crud and its options 
+         *
+         * @return void
+         */
+        public function empty () : void
+        {
+            $this->crud = null;
+            $this->option = null;
+        }
     }
 

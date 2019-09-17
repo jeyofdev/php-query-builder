@@ -6,7 +6,7 @@
     /**
      * Manage SQL aggregate functions
      */
-    class AggregateFunctionSql extends FunctionSql
+    class AggregateFunctionSql extends AbstractFunctionSql
     {
         /**
          * Get the number of total records from a table

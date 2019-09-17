@@ -167,7 +167,9 @@
          */
         public static function columns (...$columns) : void
         {
-            self::$columns = new Columns();
+            if (is_null(self::$columns)) {
+                self::$columns = SyntaxFactory::addColumns();
+            }
 
             self::checkMethodIsCalled("crud");
 
@@ -194,7 +196,7 @@
         public static function functionSql (string $functionSql, string $columns, ?string $alias = null) : void
         {
             if (is_null(self::$aggregateFunctionSql)) {
-                self::$aggregateFunctionSql = new AggregateFunctionSql();
+                self::$aggregateFunctionSql = SyntaxFactory::addAggregateFunctionSql();
             }
 
             self::$aggregateFunctionSql->setFunctionSql($functionSql, $columns, $alias);
@@ -214,7 +216,9 @@
          */
         public static function table (string $tableName, ?string $alias = null) : void
         {
-            self::$table = new Table();
+            if (is_null(self::$table)) {
+                self::$table = SyntaxFactory::addTable();
+            }
 
             self::checkMethodIsCalled("crud");
             self::$table->setTable($tableName, $alias);
@@ -240,7 +244,9 @@
          */
         public static function join (string $joinType, string $joinTable, ?string $joinAlias = null) : void
         {
-            self::$join = new Join();
+            if (is_null(self::$join)) {
+                self::$join = SyntaxFactory::addJoin();
+            }
 
             self::$join->setJoin($joinType, $joinTable, $joinAlias);
             $join = self::$join->getJoin();
@@ -265,7 +271,7 @@
                 $on = self::$join->getOn();
                 self::$sqlParts[__FUNCTION__] = " ON {$on}";
             } else {
-                throw new SyntaxException("join");
+                throw new SyntaxException("The join method must be called");
             }
         }
 
@@ -286,7 +292,7 @@
         public static function where (string $column, $value, string $operator, ?string $logicOperator = null, bool $logicOperatorNOT = false, bool $begin = false, bool $end = false) : void
         {
             if (is_null(self::$where)) {
-                self::$where = new Where();
+                self::$where = SyntaxFactory::addWhere();
             }
 
             self::$where->setCondition($column, $value, $operator, $logicOperator, $logicOperatorNOT, $begin, $end);
@@ -306,7 +312,9 @@
          */
         public static function groupBy (string $column, bool $rollup = false) : void
         {
-            self::$groupBy = new GroupBy();
+            if (is_null(self::$groupBy)) {
+                self::$groupBy = SyntaxFactory::addGroupBy();
+            }
 
             self::$groupBy->setGroupBy($column);
             $groupBy = self::$groupBy->getGroupBy();
@@ -336,11 +344,11 @@
         public static function having (string $functionSql, string $column, $value, string $operator, ?string $logicOperator = null, bool $logicOperatorNOT = false, bool $begin = false, bool $end = false) : void
         {
             if (is_null(self::$aggregateFunctionSql)) {
-                self::$aggregateFunctionSql = new AggregateFunctionSql();
+                self::$aggregateFunctionSql = SyntaxFactory::addAggregateFunctionSql();
             }
 
             if (is_null(self::$having)) {
-                self::$having = new Having(self::$aggregateFunctionSql);
+                self::$having = SyntaxFactory::addHaving(self::$aggregateFunctionSql);
             }
 
             self::$having->setHaving($functionSql, $column, $value, $operator, $logicOperator, $logicOperatorNOT, $begin, $end);
@@ -361,7 +369,7 @@
         public static function orderBy ($column, ?string $direction = "ASC") : void
         {
             if (is_null(self::$orderBy)) {
-                self::$orderBy = new OrderBy();
+                self::$orderBy = SyntaxFactory::addOrderBy();
             }
 
             self::$orderBy->setColumnAndDirection($column, $direction);
@@ -379,7 +387,9 @@
          */
         public static function limit (int $limit) : void
         {
-            self::$limit = new Limit();
+            if (is_null(self::$limit)) {
+                self::$limit = SyntaxFactory::addLimit();
+            }
 
             self::$limit->setLimit($limit);
             $limit = (self::$limit->getLimit() > 0) ? self::$limit->getLimit() : null;
@@ -397,7 +407,9 @@
          */
         public static function offset (int $offset) : void
         {
-            self::$offset = new Offset();
+            if (is_null(self::$offset)) {
+                self::$offset = SyntaxFactory::addOffset();
+            }
 
             self::$offset->setOffset($offset);
 
@@ -419,7 +431,9 @@
          */
         public static function page (int $page) : void
         {
-            self::$offset = new Offset();
+            if (is_null(self::$offset)) {
+                self::$offset = SyntaxFactory::addOffset();
+            }
             
             if (self::$offset->checkThatLimitIsGreaterThanZero(self::$limit->getLimit())) {
                 self::offset(self::$limit->getLimit() * ($page - 1));
@@ -465,6 +479,7 @@
 
             self::$sqlParts = [];
             
+            if (!is_null($crud)) self::$crud->empty();
             if (!is_null($where)) self::$where->empty();
             if (!is_null($columns)) $columns = null;
             if (!is_null($functionSql)) self::$aggregateFunctionSql->empty();
@@ -483,7 +498,9 @@
          */
         private static function getCrud (string $crud, ...$options) : void
         {
-            self::$crud = new Crud();
+            if (is_null(self::$crud)) {
+                self::$crud = SyntaxFactory::addCrud();
+            }
 
             self::$crud->setCrud($crud);
             self::$crud->setOption($options);

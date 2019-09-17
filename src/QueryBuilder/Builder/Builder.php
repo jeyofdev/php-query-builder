@@ -74,7 +74,10 @@
          */
         public static function setAttribute (array $attributes = []) : void
         {
-            self::$attribute = new Attribute(self::$pdo);
+            if (is_null(self::$attribute)) {
+                self::$attribute = BuilderFactory::addAttribute(self::$pdo);
+            }
+
             self::$attribute->setAttribute($attributes);
         }
 
@@ -88,7 +91,10 @@
          */
         public static function getAttribute (string $attribute) : int
         {
-            self::$attribute = new Attribute(self::$pdo);
+            if (is_null(self::$attribute)) {
+                self::$attribute = BuilderFactory::addAttribute(self::$pdo);
+            }
+
             return self::$attribute->getAttribute($attribute);
         }
 
@@ -146,7 +152,10 @@
          */
         public static function execute (array $params = []) : void
         {
-            self::$execute = new Execute(self::$statement);
+            if (is_null(self::$execute)) {
+                self::$execute = BuilderFactory::addExecute(self::$statement);
+            }
+            
             self::$execute->execute($params);
         }
 
@@ -160,7 +169,10 @@
          */
         public static function fetch (string $fetchMode = "FETCH_BOTH")
         {
-            self::$fetch = new Fetch(self::$statement);
+            if (is_null(self::$fetch)) {
+                self::$fetch = BuilderFactory::addFetch(self::$statement);
+            }
+
             self::$results = self::$fetch->getResults($fetchMode, true);
 
             return self::$results;
@@ -176,7 +188,10 @@
          */
         public static function fetchAll (string $fetchMode = "FETCH_BOTH") : array
         {
-            self::$fetch = new Fetch(self::$statement);
+            if (is_null(self::$fetch)) {
+                self::$fetch = BuilderFactory::addFetch(self::$statement);
+            }
+
             self::$results = self::$fetch->getResults($fetchMode, false);
 
             return self::$results;

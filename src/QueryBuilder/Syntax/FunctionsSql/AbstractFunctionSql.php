@@ -10,7 +10,7 @@
     /**
      * Manage sql functions of SQL queries
      */
-    abstract class FunctionSql
+    abstract class AbstractFunctionSql
     {
         /**
          * The aggregate sql functions allowed

@@ -16,7 +16,7 @@
     // Generate the query
     $query = $queryBuilder
         ->select()
-        ->table("sale")
+        ->table("post")
         ->toSQL();
     dump($query);
 

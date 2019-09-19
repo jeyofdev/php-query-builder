@@ -1,22 +1,21 @@
-# php-query-builder
-Set a sql query builder
+# A simple SQL query builder
 
 <a name="index_block"></a>
 
 * [1. Initialize the Querybuilder](#block1)
 * [2. Building Queries](#block2)
-    * [2.1. SELECT Statement](#block2.1)
-        * [2.1.1. Basic SELECT Statement](#block2.1.1)
-        * [2.1.2. SELECT with COLUMNS statement](#block2.1.2)
-        * [2.1.3. SELECT with WHERE statement](#block2.1.3)    
-        * [2.1.4. SELECT with ORDER BY statement](#block2.1.4)
-        * [2.1.5. SELECT with LIMIT and OFFSET statement](#block2.1.5)
-        * [2.1.6. SELECT with JOIN statement](#block2.1.6)
-        * [2.1.7. SELECT with GROUP BY statement](#block2.1.7) 
-        * [2.1.8. SELECT with HAVING statement](#block2.1.8) 
-    * [2.2. INSERT INTO Statement](#block2.2) 
-    * [2.3. UPDATE Statement](#block2.3)     
-    * [2.4. DELETE Statement](#block2.4)     
+    * [2.1. SELECT](#block2.1)
+        * [2.1.1. Basic SELECT ](#block2.1.1)
+        * [2.1.2. SELECT with COLUMNS ](#block2.1.2)
+        * [2.1.3. SELECT with WHERE](#block2.1.3)    
+        * [2.1.4. SELECT with ORDER BY](#block2.1.4)
+        * [2.1.5. SELECT with LIMIT and OFFSET](#block2.1.5)
+        * [2.1.6. SELECT with JOIN](#block2.1.6)
+        * [2.1.7. SELECT with GROUP BY](#block2.1.7) 
+        * [2.1.8. SELECT with HAVING](#block2.1.8) 
+    * [2.2. INSERT INTO](#block2.2) 
+    * [2.3. UPDATE](#block2.3)     
+    * [2.4. DELETE](#block2.4)     
 * [3. Clause](#block3)
     * [3.1. FROM](#block3.1)
         * [3.1.1. Basic FROM](#block3.1.1)
@@ -68,12 +67,12 @@ Set a sql query builder
     * [5.2. Type PREPARE](#block5.2)
     * [5.3. Type EXEC](#block5.3)
 * [6. Get the results of the query](#block6)
-    * [6.1. FETCH](#block6.1)
-    * [6.2. FETCHALL](#block6.2)
-    * [6.3. lastInsertId](#block6.3)
+    * [6.1. Fetch](#block6.1)
+    * [6.2. FetchAll](#block6.2)
+    * [6.3. LastInsertId](#block6.3)
 * [7. PDO Attributes](#block7)
-    * [7.1. PDO Attributes](#block7.1)
-    * [7.2. PDO Attributes](#block7.2)
+    * [7.1. SetAttribute](#block7.1)
+    * [7.2. GetAttribute](#block7.2)
 
 
 
@@ -94,10 +93,10 @@ $queryBuilder = new QueryBuilder($database);
 ## 2. Building Queries [↑](#index_block)
 
 <a name="block2.1"></a>
-### 2.1. SELECT Statement [↑](#index_block) 
+### 2.1. SELECT [↑](#index_block) 
 
 <a name="block2.1.1"></a>
-#### 2.1.1. Basic SELECT statement [↑](#index_block) 
+#### 2.1.1. Basic SELECT [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -108,11 +107,11 @@ $query = $queryBuilder
 
 $results = $queryBuilder
     ->query($query)
-    ->fetchAll("FETCH_OBJ");
+    ->fetchAll("OBJ");
 ```
 
 <a name="block2.1.2"></a>
-#### 2.1.2. SELECT with COLUMNS statement [↑](#index_block) 
+#### 2.1.2. SELECT with COLUMNS [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -124,11 +123,11 @@ $query = $queryBuilder
 
 $results = $queryBuilder
     ->query($query)
-    ->fetchAll("FETCH_OBJ");
+    ->fetchAll("OBJ");
 ```
 
 <a name="block2.1.3"></a>
-#### 2.1.3. SELECT with WHERE statement [↑](#index_block) 
+#### 2.1.3. SELECT with WHERE [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -144,11 +143,11 @@ $results = $queryBuilder
     ->execute([
         "id" => 5
     ])
-    ->fetchAll("FETCH_OBJ");
+    ->fetchAll("OBJ");
 ```
 
 <a name="block2.1.4"></a>
-#### 2.1.4. SELECT with ORDER BY statement [↑](#index_block) 
+#### 2.1.4. SELECT with ORDER BY [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -165,11 +164,11 @@ $results = $queryBuilder
     ->execute([
         "id" => 5
     ])
-    ->fetchAll("FETCH_OBJ");
+    ->fetchAll("OBJ");
 ```
 
 <a name="block2.1.5"></a>
-#### 2.1.5. SELECT with LIMIT and OFFSET statement [↑](#index_block) 
+#### 2.1.5. SELECT with LIMIT and OFFSET [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -188,7 +187,7 @@ $results = $queryBuilder
     ->execute([
         "id" => 5
     ])
-    ->fetchAll("FETCH_OBJ");
+    ->fetchAll("OBJ");
 ```
 
 #### Usage:
@@ -208,13 +207,13 @@ $results = $queryBuilder
     ->execute([
         "id" => 5
     ])
-    ->fetchAll("FETCH_OBJ");
+    ->fetchAll("OBJ");
 ```
 
 
 
 <a name="block2.1.6"></a>
-#### 2.1.6. SELECT with JOIN statement [↑](#index_block) 
+#### 2.1.6. SELECT with JOIN [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -232,11 +231,11 @@ $results = $queryBuilder
     ->execute([
         "id" => 5
     ])
-    ->fetchAll("FETCH_OBJ");
+    ->fetchAll("OBJ");
 ```
 
 <a name="block2.1.7"></a>
-#### 2.1.7. SELECT with GROUP BY statement [↑](#index_block) 
+#### 2.1.7. SELECT with GROUP BY [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -251,11 +250,11 @@ $query = $queryBuilder
 $results = $queryBuilder
     ->prepare($query)
     ->execute()
-    ->fetchAll("FETCH_OBJ");
+    ->fetchAll("OBJ");
 ```
 
 <a name="block2.1.8"></a>
-#### 2.1.8. SELECT with HAVING statement [↑](#index_block) 
+#### 2.1.8. SELECT with HAVING [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -271,12 +270,12 @@ $query = $queryBuilder
 $results = $queryBuilder
     ->prepare($query)
     ->execute()
-    ->fetchAll("FETCH_OBJ");
+    ->fetchAll("OBJ");
 ```
 
 
 <a name="block2.2"></a>
-### 2.2. INSERT Statement [↑](#index_block) 
+### 2.2. INSERT [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -300,7 +299,7 @@ $results = $queryBuilder
 ```
 
 <a name="block2.3"></a>
-### 2.3. UPDATE Statement [↑](#index_block) 
+### 2.3. UPDATE [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -327,7 +326,7 @@ $results = $queryBuilder
 
 
 <a name="block2.3"></a>
-### 2.3. DELETE Statement [↑](#index_block) 
+### 2.3. DELETE [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -351,11 +350,10 @@ $results = $queryBuilder
 
 
 <a name="block3.1"></a>
-#### 3.1 FROM [↑](#index_block) 
-
+### 3.1 FROM [↑](#index_block) 
 
 <a name="block3.1.1"></a>
-### 3.1.1. Basic FROM [↑](#index_block) 
+#### 3.1.1. Basic FROM [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -370,7 +368,7 @@ SELECT * FROM post
 ```
 
 <a name="block3.1.2"></a>
-### 3.1.2 Alias FROM [↑](#index_block) 
+#### 3.1.2 FROM with alias [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -386,10 +384,12 @@ SELECT * FROM post AS p
 
 
 <a name="block3.2"></a>
-#### 3.2 COLUMNS [↑](#index_block) 
+### 3.2 COLUMNS [↑](#index_block) 
 
 <a name="block3.2.1"></a>
-### 3.2.1. Basic COLUMNS [↑](#index_block) 
+#### 3.2.1. Basic COLUMNS [↑](#index_block) 
+
+For use all fields in the table (*), you do not need to call the columns () method.
 
 #### Usage:
 ```php
@@ -412,7 +412,7 @@ SELECT * FROM post
 ```
 
 <a name="block3.2.2"></a>
-### 3.2.2. Set COLUMNS [↑](#index_block) 
+#### 3.2.2. Set COLUMNS [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -428,7 +428,7 @@ SELECT id, name, content FROM post
 ```
 
 <a name="block3.2.3"></a>
-### 3.2.3. Set COLUMNS with alias [↑](#index_block) 
+#### 3.2.3. Set COLUMNS with alias [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -447,7 +447,7 @@ SELECT p.id AS postId, name AS postName FROM post AS p
 ```
 
 <a name="block3.3"></a>
-#### 3.3 JOIN/INNER JOIN/CROSS JOIN/JOIN LEFT/ JOIN RIGHT/FULL JOIN [↑](#index_block) 
+### 3.3 JOIN/INNER JOIN/CROSS JOIN/JOIN LEFT/ JOIN RIGHT/FULL JOIN [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -480,14 +480,11 @@ SELECT c.*, pc.post_id FROM post_category AS pc LEFT JOIN category AS c ON c.id 
 ```
 
 
-
-
-
 <a name="block3.4"></a>
-#### 3.4 WHERE [↑](#index_block) 
+### 3.4 WHERE [↑](#index_block) 
 
 <a name="block3.4.1"></a>
-### 3.4.1. Basic WHERE [↑](#index_block) 
+#### 3.4.1. Basic WHERE [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -503,10 +500,10 @@ SELECT * FROM post WHERE id >= :id
 ```
 
 <a name="block3.4.2"></a>
-### 3.4.2. WHERE multiple [↑](#index_block) 
+#### 3.4.2. WHERE multiple [↑](#index_block) 
 
 <a name="block3.4.2.1"></a>
-### 3.4.2.1 WHERE multiple with operator "AND" [↑](#index_block) 
+#### 3.4.2.1 WHERE multiple with operator "AND" [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -523,7 +520,7 @@ SELECT * FROM post WHERE id >= :id AND slug = :slug
 ```
 
 <a name="block3.4.2.2"></a>
-### 3.4.2.2 WHERE multiple with operator "OR" [↑](#index_block) 
+#### 3.4.2.2 WHERE multiple with operator "OR" [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -540,7 +537,7 @@ SELECT * FROM post WHERE id = :id OR slug = :slug
 ```
 
 <a name="block3.4.2.3"></a>
-### 3.4.2.3 WHERE multiple with parenthesis [↑](#index_block) 
+#### 3.4.2.3 WHERE multiple with parenthesis [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -558,7 +555,7 @@ SELECT * FROM post WHERE id > :id AND (slug = :slugA OR slug = :slugB)
 ```
 
 <a name="block3.4.3"></a>
-### 3.4.3. WHERE multiple with operator "NOT" [↑](#index_block) 
+#### 3.4.3. WHERE multiple with operator "NOT" [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -574,7 +571,7 @@ SELECT * FROM post WHERE NOT id >= :id
 ```
 
 <a name="block3.4.4"></a>
-### 3.4.4. WHERE with operator "IN" [↑](#index_block) 
+#### 3.4.4. WHERE with operator "IN" [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -590,7 +587,7 @@ SELECT * FROM post WHERE id IN (1, 2, 3)
 ```
 
 <a name="block3.4.5"></a>
-### 3.4.5. WHERE with operator "BETWEEN" [↑](#index_block) 
+#### 3.4.5. WHERE with operator "BETWEEN" [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -606,10 +603,10 @@ SELECT * FROM post WHERE id BETWEEN 5 AND 10
 ```
 
 <a name="block3.4.6"></a>
-### 3.4.6. WHERE with operator "IS NULL" and "IS NOT NULL" [↑](#index_block) 
+#### 3.4.6. WHERE with operator "IS NULL" and "IS NOT NULL" [↑](#index_block) 
 
 <a name="block3.4.6.1"></a>
-### 3.4.6.1 Where with IS NULL [↑](#index_block) 
+#### 3.4.6.1 Where with IS NULL [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -624,7 +621,7 @@ $query = $queryBuilder
 SELECT * FROM post WHERE id IS NULL
 ```
 <a name="block3.4.6.2"></a>
-### 3.4.6.2 WHERE with IS NOT NULL [↑](#index_block) 
+#### 3.4.6.2 WHERE with IS NOT NULL [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -640,7 +637,7 @@ SELECT * FROM post WHERE id IS NOT NULL
 ```
 
 <a name="block3.4.7"></a>
-### 3.4.7. WHERE with operator "LIKE" [↑](#index_block) 
+#### 3.4.7. WHERE with operator "LIKE" [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -657,11 +654,10 @@ SELECT * FROM post WHERE name LIKE 'S%'
 
 
 <a name="block3.5"></a>
-#### 3.5 ORDER BY [↑](#index_block) 
-
+### 3.5 ORDER BY [↑](#index_block) 
 
 <a name="block3.5.1"></a>
-### 3.5.1. Basic ORDER BY [↑](#index_block) 
+#### 3.5.1. Basic ORDER BY [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -677,14 +673,14 @@ SELECT * FROM post ORDER BY id ASC
 ```
 
 <a name="block3.5.2"></a>
-### 3.5.2. ORDER BY with direction [↑](#index_block) 
+#### 3.5.2. ORDER BY with direction [↑](#index_block) 
 
 #### Usage:
 ```php
 $query = $queryBuilder
     ->select()
     ->table("post")
-    ->orderBy("id", "desc)
+    ->orderBy("id", "desc")
     ->toSQL();
 ```
 #### Output:
@@ -693,14 +689,14 @@ SELECT * FROM post ORDER BY id DESC
 ```
 
 <a name="block3.5.3"></a>
-### 3.5.3. ORDER BY multiple [↑](#index_block) 
+#### 3.5.3. ORDER BY multiple [↑](#index_block) 
 
 #### Usage:
 ```php
 $query = $queryBuilder
     ->select()
     ->table("post")
-    ->orderBy("id", "DESC")
+    ->orderBy("id", "desc")
     ->orderBy("name")
     ->toSQL();
 ```
@@ -710,8 +706,8 @@ $query = $queryBuilder
     ->select()
     ->table("post")
     ->orderBy([
-        "id" => "DESC",
-        "name" => "ASC
+        "id" => "desc",
+        "name" => "asc"
     ])
     ->toSQL();
 ```
@@ -722,10 +718,10 @@ SELECT * FROM post ORDER BY id DESC, name ASC
 
 
 <a name="block3.5"></a>
-#### 3.5 LIMIT and OFFSET [↑](#index_block) 
+### 3.5 LIMIT and OFFSET [↑](#index_block) 
 
 <a name="block3.5.1"></a>
-### 3.5.1. Basic LIMIT [↑](#index_block) 
+#### 3.5.1. Basic LIMIT [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -741,7 +737,7 @@ SELECT * FROM post LIMIT 10
 ```
 
 <a name="block3.5.2"></a>
-### 3.5.2. Basic LIMIT and OFFSET [↑](#index_block) 
+#### 3.5.2. Basic LIMIT and OFFSET [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -758,7 +754,7 @@ SELECT * FROM post LIMIT 10 OFFSET 20
 ```
 
 <a name="block3.5.3"></a>
-### 3.5.3. Dynamic OFFSET [↑](#index_block) 
+#### 3.5.3. Dynamic OFFSET with page method [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -779,10 +775,10 @@ SELECT * FROM post LIMIT 10 OFFSET 20
 ## 4. Advanced Clause [↑](#index_block)
 
 <a name="block4.1"></a>
-#### 4.1 GROUP BY [↑](#index_block)
+### 4.1 GROUP BY [↑](#index_block)
 
 <a name="block4.1.1"></a>
-### 4.1.1. Basic GROUP BY [↑](#index_block) 
+#### 4.1.1. Basic GROUP BY [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -800,7 +796,7 @@ SELECT client, SUM(price) AS priceTotal FROM sale GROUP BY client
 ```
 
 <a name="block4.1.2"></a>
-### 4.1.2. GROUP BY with ROLLUP [↑](#index_block) 
+#### 4.1.2. GROUP BY with ROLLUP [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -821,10 +817,10 @@ SELECT client, SUM(price) AS priceTotal, COUNT(*) AS count, MAX(price) AS priceM
 
 
 <a name="block4.2"></a>
-#### 4.2 HAVING [↑](#index_block)
+### 4.2 HAVING [↑](#index_block)
 
 <a name="block4.2.1"></a>
-### 4.2.1. Basic HAVING [↑](#index_block) 
+#### 4.2.1. Basic HAVING [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -843,10 +839,10 @@ SELECT client, SUM(price) AS priceTotal FROM sale GROUP BY client HAVING SUM(pri
 ```
 
 <a name="block4.2.2"></a>
-### 4.2.2. HAVING multiple [↑](#index_block) 
+#### 4.2.2. HAVING multiple [↑](#index_block) 
 
 <a name="block4.2.2.1"></a>
-### 4.2.2.1 HAVING multiple with operator "AND" [↑](#index_block) 
+#### 4.2.2.1 HAVING multiple with operator "AND" [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -866,7 +862,7 @@ SELECT client, SUM(price) AS priceTotal FROM sale GROUP BY client HAVING SUM(pri
 ```
 
 <a name="block4.2.2.2"></a>
-### 4.2.2.2 HAVING multiple with operator "OR" [↑](#index_block) 
+#### 4.2.2.2 HAVING multiple with operator "OR" [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -886,7 +882,7 @@ SELECT client, SUM(price) AS priceTotal FROM sale GROUP BY client HAVING SUM(pri
 ```
 
 <a name="block4.2.2.3"></a>
-### 4.2.2.3 HAVING multiple with parenthesis [↑](#index_block) 
+#### 4.2.2.3 HAVING multiple with parenthesis [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -907,7 +903,7 @@ SELECT client, SUM(price) AS priceTotal FROM sale GROUP BY client HAVING SUM(pri
 ```
 
 <a name="block4.2.3"></a>
-### 4.2.3. HAVING with operator "NOT" [↑](#index_block) 
+#### 4.2.3. HAVING with operator "NOT" [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -926,7 +922,7 @@ SELECT client, SUM(price) AS priceTotal FROM sale GROUP BY client HAVING NOT SUM
 ```
 
 <a name="block4.2.4"></a>
-### 4.2.4. HAVING with operator "IN" [↑](#index_block) 
+#### 4.2.4. HAVING with operator "IN" [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -945,7 +941,7 @@ SELECT client, SUM(price) AS priceTotal FROM sale GROUP BY client HAVING SUM(pri
 ```
 
 <a name="block4.2.5"></a>
-### 4.2.5. HAVING with operator "BETWEEN" [↑](#index_block) 
+#### 4.2.5. HAVING with operator "BETWEEN" [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -964,10 +960,10 @@ SELECT client, SUM(price) AS priceTotal FROM sale GROUP BY client HAVING SUM(pri
 ```
 
 <a name="block4.2.6"></a>
-### 4.2.6. HAVING with operator "IS NOT NULL" and "IS NULL" [↑](#index_block) 
+#### 4.2.6. HAVING with operator "IS NOT NULL" and "IS NULL" [↑](#index_block) 
 
 <a name="block4.2.6.1"></a>
-### 4.2.6.1 HAVING with "IS NULL" [↑](#index_block) 
+#### 4.2.6.1 HAVING with "IS NULL" [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -986,7 +982,7 @@ SELECT client, SUM(price) AS priceTotal FROM sale GROUP BY client HAVING SUM(pri
 ```
 
 <a name="block4.2.6.2"></a>
-### 4.2.6.2 HAVING with "IS NOT NULL" [↑](#index_block) 
+#### 4.2.6.2 HAVING with "IS NOT NULL" [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -1021,7 +1017,7 @@ $query = $queryBuilder
 
 $results = $this->getBuilder()
     ->query($query)
-    ->fetchAll("FETCH_OBJ");
+    ->fetchAll("OBJ");
 ```
 
 <a name="block5.2"></a>
@@ -1040,7 +1036,7 @@ $results = $queryBuilder
     ->execute([
         "id" => 5
     ])
-    ->fetchAll("FETCH_OBJ");
+    ->fetchAll("OBJ");
 ```
 
 <a name="block5.3"></a>
@@ -1062,7 +1058,7 @@ $results = $queryBuilder
 ## 6. Get the results of the query [↑](#index_block)
 
 <a name="block6.1"></a>
-### 6.1. FETCH [↑](#index_block) 
+### 6.1. Fetch [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -1077,11 +1073,11 @@ $results = $queryBuilder
     ->execute([
         "id" => 5
     ])
-    ->fetch("FETCH_OBJ");
+    ->fetch("OBJ"); //takes optional parameter setFetchMode ("ASSOC", "BOTH", "CLASS", "INTO", "LAZY", "NAMED", "NUM", "OBJ" or "PROPS_LATE")
 ```
 
 <a name="block6.2"></a>
-### 6.2. FETCHALL [↑](#index_block) 
+### 6.2. FetchAll [↑](#index_block) 
 
 #### Usage:
 ```php
@@ -1096,7 +1092,7 @@ $results = $queryBuilder
     ->execute([
         "id" => 5
     ])
-    ->fetchAll("FETCH_OBJ");
+    ->fetchAll("OBJ");  //takes optional parameter setFetchMode ("ASSOC", "BOTH", "CLASS", "INTO", "LAZY", "NAMED", "NUM", "OBJ" or "PROPS_LATE")
 ```
 
 <a name="block6.3"></a>
@@ -1126,21 +1122,20 @@ $results = $queryBuilder
 
 
 <a name="block7"></a>
-### 7. PDO attibutes [↑](#index_block)
+## 7. PDO attibutes [↑](#index_block)
 
 <a name="block7.1"></a>
-### 7.1. Set attributes [↑](#index_block) 
+### 7.1. SetAttribute [↑](#index_block) 
 
 #### Usage:
 ```php
 $queryBuilder->setAttribute([
-    "ERRMODE" => PDO::ERRMODE_EXCEPTION
+    "ERRMODE" => "EXCEPTION"
 ]);
 ```
 
-
 <a name="block7.2"></a>
-### 7.2. Get attributes [↑](#index_block) 
+### 7.2. GetAttribute [↑](#index_block) 
 
 #### Usage:
 ```php

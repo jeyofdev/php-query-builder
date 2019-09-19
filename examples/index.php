@@ -14,12 +14,8 @@
 
 
     // Generate the query
-    $query = $queryBuilder
-    ->delete()
-    ->table("post")
-    ->where("id", 5, "<=")
-    ->toSQL();
-
-$results = $queryBuilder
-    ->exec($query);
+    $queryBuilder->setAttribute([
+        "errmode" => "WARNING"
+    ]);
+    $results = $queryBuilder->getAttribute("ERRMODE");
 dump($results);

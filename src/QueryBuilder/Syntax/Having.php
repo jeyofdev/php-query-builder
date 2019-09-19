@@ -4,16 +4,16 @@
 
     use jeyofdev\Php\Query\Builder\Exception\SyntaxHavingException;
     use jeyofdev\Php\Query\Builder\Helpers\QueryBuilderHelpers;
+    use jeyofdev\Php\Query\Builder\QueryBuilder\Operators\AbstractOperators;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Syntax\FunctionsSql\AggregateFunctionSql;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Operators\ComparisonOperators;
     use jeyofdev\Php\Query\Builder\QueryBuilder\Operators\LogicOperators;
-    use jeyofdev\Php\Query\Builder\QueryBuilder\Operators\Operators;
 
 
     /**
      * Manage the "HAVING" command of SQL queries
      */
-    class Having extends Operators
+    class Having extends AbstractOperators
     {
         /**
          * @var ComparisonOperators
@@ -85,6 +85,18 @@
         public function setHaving (string $functionSql, string $column, $value, string $operator, ?string $logicOperator = null, bool $logicOperatorNOT = false, bool $begin = false, bool $end = false) : void
         {
             $this->generateHaving($functionSql, $column, $value, $operator, $logicOperator, $logicOperatorNOT, $begin, $end);
+        }
+
+
+
+        /**
+         * Empty the HAVING clause
+         *
+         * @return void
+         */
+        public function empty () : void
+        {
+            $this->having = null;
         }
 
 

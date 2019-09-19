@@ -10,7 +10,7 @@
     /**
      * Manage the PDO connection
      */
-    abstract class Connection
+    abstract class AbstractConnection
     {
         /**
          * PDO parameters
@@ -105,6 +105,18 @@
         public function getPDO () : PDO
         {
             return $this->pdo;
+        }
+
+
+
+        /**
+         * Get the name of the database
+         *
+         * @return string
+         */
+        public function getDatabaseName () : string
+        {
+            return $this->db_name;
         }
     }
     

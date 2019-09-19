@@ -6,7 +6,7 @@
     /**
      * Manage the operators
      */
-    class Operators
+    class AbstractOperators
     {
         const EQUAL = "=";
         const GREATER_THAN = ">";

@@ -6,7 +6,7 @@
     /**
      * Manage a database
      */
-    class Database extends Connection
+    class Database extends AbstractConnection
     {
         /**
          * Create a database
@@ -56,7 +56,7 @@
         public function clear (string $tableName) : self
         {
             $this->pdo->exec("SET FOREIGN_KEY_CHECKS = 0");
-            $this->pdo->exec("TRUNCATE TABLE {$tableName}");
+            $this->pdo->exec("TRUNCATE TABLE {$this->getTableName($tableName)}");
             $this->pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
             
             return $this;
@@ -67,7 +67,7 @@
         /**
          * Get the name of a table
          *
-         * @param  string  $tableName
+         * @param $tableName
          * @return string
          */
         public function getTableName (string $tableName) : string

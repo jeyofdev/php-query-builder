@@ -3,14 +3,14 @@
 
 
     use jeyofdev\Php\Query\Builder\Helpers\QueryBuilderHelpers;
-    use jeyofdev\Php\Query\Builder\QueryBuilder\Attributes\AttributesAbstract;
+    use jeyofdev\Php\Query\Builder\QueryBuilder\Attributes\AbstractAttributes;
     use PDO;
 
 
     /**
      * Manage The attributes of PDO
      */
-    class Attribute extends AttributesAbstract
+    class Attribute extends AbstractAttributes
     {
         /**
          * @var PDO
@@ -39,13 +39,16 @@
         {
             if (!empty($attributes)) {
                 foreach ($attributes as $key => $value) {
+                    $key = strtoupper($key);
                     if (QueryBuilderHelpers::checkStringIsInArray($key, $this::ATTRIBUTES_ALLOWED)) {
                         $attribute = constant("PDO::ATTR_$key");
 
                         $name = "ATTRIBUTES_" . $key . "_ALLOWED";
 
+                        $value = strtoupper($value);
                         if (QueryBuilderHelpers::checkStringIsInArray($value, $this->$name)) {
-                            $value = constant("PDO::ATTR_$value");
+                            $v = $key . "_" . $value;
+                            $value = constant("PDO::$v");
                         }
 
                         $this->pdo->setAttribute($attribute, $value);
@@ -64,7 +67,8 @@
          */
         public function getAttribute (string $attribute) : int
         {
-            $attribute = constant("PDO::ATTR_$attribute");
+            $value = strtoupper($attribute);
+            $attribute = constant("PDO::ATTR_$value");
             return $this->pdo->getAttribute($attribute);
         }
     }

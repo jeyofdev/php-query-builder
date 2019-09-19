@@ -10,7 +10,7 @@
     /**
      * Manage sql functions of SQL queries
      */
-    abstract class FunctionSql
+    abstract class AbstractFunctionSql
     {
         /**
          * The aggregate sql functions allowed
@@ -63,6 +63,19 @@
         public function getFunctionSql () : ?string
         {
             return $this->functionSql;
+        }
+
+
+
+        /**
+         * Empty the sql functions
+         *
+         * @return void
+         */
+        public function empty () : void
+        {
+            $this->functionSql = null;
+            $this->functionSqlParts = [];
         }
 
 

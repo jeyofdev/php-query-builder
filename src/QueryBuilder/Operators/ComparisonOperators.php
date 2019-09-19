@@ -9,7 +9,7 @@
     /**
      * Manage the comparison operators
      */
-    class ComparisonOperators extends Operators
+    class ComparisonOperators extends AbstractOperators
     {
         /**
          * Check that the comparison operator used in a condition of an SQL query is allowed

@@ -4,10 +4,7 @@
 
 
     use jeyofdev\Php\Query\Builder\Database\Database;
-    use jeyofdev\Php\Query\Builder\QueryBuilder\Builder\Builder;
     use jeyofdev\Php\Query\Builder\QueryBuilder\QueryBuilder;
-    use jeyofdev\Php\Query\Builder\QueryBuilder\Syntax\Syntax;
-    use PDO;
     use PHPUnit\Framework\TestCase;
 
 
@@ -21,20 +18,6 @@
 
 
         /**
-         * @var Syntax
-         */
-        private $syntax;
-
-
-
-        /**
-         * @var Builder
-         */
-        private $builder;
-
-
-
-        /**
          * Get an instance of the query builder
          *
          * @return QueryBuilder
@@ -42,10 +25,7 @@
         public function getBuilder () : QueryBuilder
         {
             $this->database = new Database("localhost", "root", "root", "demo");
-            $this->syntax = new Syntax();
-            $this->builder = new Builder($this->database->getConnection("demo"));
-
-            return new QueryBuilder($this->database, $this->syntax, $this->builder);
+            return new QueryBuilder($this->database);
         }
 
 
@@ -55,7 +35,7 @@
          */
         public function testSelect() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->columns()
                 ->table("post")
@@ -70,7 +50,7 @@
          */
         public function testSelectWithOptions() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select("DISTINCT")
                 ->columns()
                 ->table("post")
@@ -85,7 +65,7 @@
          */
         public function testInsert() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->insert()
                 ->table("post")
                 ->columns([
@@ -103,7 +83,7 @@
          */
         public function testUpdate() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->update()
                 ->table("post")
                 ->columns([
@@ -121,7 +101,7 @@
          */
         public function testDelete() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->delete()
                 ->table("post")
                 ->toSQL();
@@ -135,7 +115,7 @@
          */
         public function testTableNameWithAlias() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post", "p")
                 ->toSQL();
@@ -147,9 +127,93 @@
         /**
          * @test
          */
+        public function testJoin() : void
+        {
+            $query = $this->getBuilder()
+                ->select()
+                ->columns("c.*", "pc.post_id")
+                ->table("post_category", "pc")
+                ->join("JOIN", "category", "c")
+                ->on("c.id", "pc.category_id")
+                ->toSQL();
+            $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc JOIN category AS c ON c.id = pc.category_id", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testInnerJoin() : void
+        {
+                $query = $this->getBuilder()
+                ->select()
+                ->columns("c.*", "pc.post_id")
+                ->table("post_category", "pc")
+                ->join("INNER JOIN", "category", "c")
+                ->on("pc.category_id", "c.id")
+                ->toSQL();
+            $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc INNER JOIN category AS c ON pc.category_id = c.id", $query);
+    }
+
+
+
+    /**
+     * @test
+     */
+    public function testCrossJoin() : void
+    {
+        $query = $this->getBuilder()
+            ->select()
+            ->columns("c.*", "pc.post_id")
+            ->table("post_category", "pc")
+            ->join("CROSS JOIN", "category", "c")
+            ->toSQL();
+        $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc CROSS JOIN category AS c", $query);
+    }
+
+
+
+        /**
+         * @test
+         */
+        public function testLeftJoin() : void
+        {
+            $query = $this->getBuilder()
+                ->select()
+                ->columns("c.*", "pc.post_id")
+                ->table("post_category", "pc")
+                ->join("LEFT JOIN", "category", "c")
+                ->on("pc.category_id", "c.id")
+                ->toSQL();
+            $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc LEFT JOIN category AS c ON pc.category_id = c.id", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
+        public function testRightJoin() : void
+        {
+            $query = $this->getBuilder()
+                ->select()
+                ->columns("c.*", "pc.post_id")
+                ->table("post_category", "pc")
+                ->join("RIGHT JOIN", "category", "c")
+                ->on("pc.category_id", "c.id")
+                ->toSQL();
+            $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc RIGHT JOIN category AS c ON pc.category_id = c.id", $query);
+        }
+
+
+
+        /**
+         * @test
+         */
         public function testWhereClause() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post", "p")
                 ->where("id", ":id", ">=")
@@ -164,7 +228,7 @@
          */
         public function testWhereClauseMultiple() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post", "p")
                 ->where("id", ":id", ">=")
@@ -181,7 +245,7 @@
          */
         public function testWhereClauseWithOperatorNot() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post", "p")
                 ->where("id", ":id", ">=", null, true)
@@ -196,7 +260,7 @@
          */
         public function testWhereClauseWithParenthesis() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->where("id", ":id", ">")
@@ -213,7 +277,7 @@
          */
         public function testWhereClauseWithOperatorIn() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->where("id", [1, 2, 3], "IN")
@@ -228,7 +292,7 @@
          */
         public function testWhereClauseWithOperatorBetween() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->where("id", [5, 10], "BETWEEN")
@@ -243,7 +307,7 @@
          */
         public function testWhereClauseWithOperatorIsNull() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->where("id", null, "IS NULL")
@@ -258,7 +322,7 @@
          */
         public function testWhereClauseWithOperatorLike() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->where("name", 'S%', "LIKE")
@@ -273,7 +337,7 @@
          */
         public function testGroupBy() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->columns("client")
                 ->functionSql("sum", "price", "price_sum")
@@ -290,7 +354,7 @@
          */
         public function testGroupByWithRollup() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->columns("client")
                 ->functionSql("sum", "price", "sum_price")
@@ -309,7 +373,7 @@
          */
         public function testHavingClause() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->columns("client")
                 ->functionSql("sum", "price", "sum_price")
@@ -327,7 +391,7 @@
          */
         public function testHavingClauseMultiple() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->columns("client")
                 ->functionSql("sum", "price", "sum_price")
@@ -346,7 +410,7 @@
          */
         public function testHavingClauseWithOperatorNot() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->columns("client")
                 ->functionSql("sum", "price", "sum_price")
@@ -364,7 +428,7 @@
          */
         public function testHavingClauseWithParenthesis() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->columns("client")
                 ->functionSql("sum", "price", "sum_price")
@@ -384,7 +448,7 @@
          */
         public function testHavingClauseWithOperatorIn() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->columns("client")
                 ->functionSql("sum", "price", "sum_price")
@@ -402,7 +466,7 @@
          */
         public function testHavingClauseWithOperatorBetween() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->columns("client")
                 ->functionSql("sum", "price", "sum_price")
@@ -420,7 +484,7 @@
          */
         public function testHavingClauseWithOperatorIsNull() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->columns("client")
                 ->functionSql("sum", "price", "sum_price")
@@ -438,7 +502,7 @@
          */
         public function testOrderByClause() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->orderBy("id", "DESC")
@@ -453,7 +517,7 @@
          */
         public function testOrderByClauseWithoutDirection() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->orderBy("id")
@@ -468,7 +532,7 @@
          */
         public function testOrderByClauseMultiple() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->orderBy("id", "DESC")
@@ -484,7 +548,7 @@
          */
         public function testOrderByClauseAsArray() : void
         {
-            $firstQuery = $this->getBuilder()->getSyntax()
+            $firstQuery = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->orderBy([
@@ -496,7 +560,7 @@
             $this->assertEquals("SELECT * FROM post ORDER BY id ASC, category DESC, name ASC", $firstQuery);
 
 
-            $secondQuery = $this->getBuilder()->getSyntax()
+            $secondQuery = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->orderBy([
@@ -515,7 +579,7 @@
          */
         public function testLimit() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->limit(10)
@@ -530,7 +594,7 @@
          */
         public function testLimitAsZero() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->limit(0)
@@ -545,7 +609,7 @@
          */
         public function testOffset() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->limit(5)
@@ -561,7 +625,7 @@
          */
         public function testOffsetAsZero() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->limit(5)
@@ -577,7 +641,7 @@
          */
         public function testOffsetWithMethodPage() : void
         {
-            $firstQuery = $this->getBuilder()->getSyntax()
+            $firstQuery = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->limit(5)
@@ -585,7 +649,7 @@
                 ->toSQL();
             $this->assertEquals("SELECT * FROM post LIMIT 5 OFFSET 10", $firstQuery);
 
-            $lastQuery = $this->getBuilder()->getSyntax()
+            $lastQuery = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->limit(5)
@@ -599,93 +663,9 @@
         /**
          * @test
          */
-        public function testJoin() : void
-        {
-            $query = $this->getBuilder()->getSyntax()
-                ->select()
-                ->columns("c.*", "pc.post_id")
-                ->table("post_category", "pc")
-                ->join("JOIN", "category", "c")
-                ->on("c.id", "pc.category_id")
-                ->toSQL();
-            $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc JOIN category AS c ON c.id = pc.category_id", $query);
-        }
-
-
-
-        /**
-         * @test
-         */
-        public function testInnerJoin() : void
-        {
-                $query = $this->getBuilder()->getSyntax()
-                ->select()
-                ->columns("c.*", "pc.post_id")
-                ->table("post_category", "pc")
-                ->join("INNER JOIN", "category", "c")
-                ->on("pc.category_id", "c.id")
-                ->toSQL();
-            $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc INNER JOIN category AS c ON pc.category_id = c.id", $query);
-    }
-
-
-
-    /**
-     * @test
-     */
-    public function testCrossJoin() : void
-    {
-        $query = $this->getBuilder()->getSyntax()
-            ->select()
-            ->columns("c.*", "pc.post_id")
-            ->table("post_category", "pc")
-            ->join("CROSS JOIN", "category", "c")
-            ->toSQL();
-        $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc CROSS JOIN category AS c", $query);
-    }
-
-
-
-        /**
-         * @test
-         */
-        public function testLeftJoin() : void
-        {
-            $query = $this->getBuilder()->getSyntax()
-                ->select()
-                ->columns("c.*", "pc.post_id")
-                ->table("post_category", "pc")
-                ->join("LEFT JOIN", "category", "c")
-                ->on("pc.category_id", "c.id")
-                ->toSQL();
-            $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc LEFT JOIN category AS c ON pc.category_id = c.id", $query);
-        }
-
-
-
-        /**
-         * @test
-         */
-        public function testRightJoin() : void
-        {
-            $query = $this->getBuilder()->getSyntax()
-                ->select()
-                ->columns("c.*", "pc.post_id")
-                ->table("post_category", "pc")
-                ->join("RIGHT JOIN", "category", "c")
-                ->on("pc.category_id", "c.id")
-                ->toSQL();
-            $this->assertEquals("SELECT c.*, pc.post_id FROM post_category AS pc RIGHT JOIN category AS c ON pc.category_id = c.id", $query);
-        }
-
-
-
-        /**
-         * @test
-         */
         public function testExec() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->delete()
                 ->table("post")
                 ->where("id", 10, ">")
@@ -693,7 +673,7 @@
             $this->assertEquals("DELETE FROM post WHERE id > 10", $query);
             
 
-            $result = $this->getBuilder()->getBuilder()->exec($query);
+            $result = $this->getBuilder()->exec($query);
             $this->assertGreaterThanOrEqual(0, $result);
         }
 
@@ -704,7 +684,7 @@
          */
         public function testFetch() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->where("id", ":id", ">")
@@ -712,10 +692,10 @@
             $this->assertEquals("SELECT * FROM post WHERE id > :id", $query);
             
 
-            $results = $this->getBuilder()->getBuilder()
+            $results = $this->getBuilder()
                 ->prepare($query)
                 ->execute(["id" => 5])
-                ->fetch("FETCH_OBJ");
+                ->fetch("OBJ");
 
             $this->assertNotEmpty($results);
         }
@@ -727,7 +707,7 @@
          */
         public function testFetchAll() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->where("id", ":id", ">")
@@ -735,10 +715,10 @@
             $this->assertEquals("SELECT * FROM post WHERE id > :id", $query);
             
 
-            $results = $this->getBuilder()->getBuilder()
+            $results = $this->getBuilder()
                 ->prepare($query)
                 ->execute(["id" => 5])
-                ->fetchAll("FETCH_OBJ");
+                ->fetchAll("OBJ");
 
             $this->assertNotEmpty($results);
         }
@@ -750,7 +730,7 @@
          */
         public function testFetchLastInsertId() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->select()
                 ->table("post")
                 ->where("id", ":id", ">")
@@ -758,7 +738,7 @@
             $this->assertEquals("SELECT * FROM post WHERE id > :id", $query);
             
 
-            $results = $this->getBuilder()->getBuilder()
+            $results = $this->getBuilder()
                 ->lastInsertId();
 
             $this->assertNotNull($results);
@@ -771,7 +751,7 @@
          */
         public function testPDOQuote() : void
         {
-            $value = $this->getBuilder()->getBuilder()->quote("lorem ipsum");
+            $value = $this->getBuilder()->quote("lorem ipsum");
             $this->assertEquals("'lorem ipsum'", $value);
         }
 
@@ -782,19 +762,19 @@
          */
         public function testRowCount() : void
         {
-            $query = $this->getBuilder()->getSyntax()
+            $query = $this->getBuilder()
                 ->delete()
                 ->table("post")
                 ->where("id", ":id", ">")
                 ->toSql();
             $this->assertEquals("DELETE FROM post WHERE id > :id", $query);
             
-            $count = $this->getBuilder()->getBuilder()
+            $count = $this->getBuilder()
                 ->prepare($query)
                 ->execute(["id" => 8])
                 ->rowCount();
 
-                $this->assertGreaterThanOrEqual(0, $count);
+            $this->assertGreaterThanOrEqual(0, $count);
         }
 
 
@@ -804,9 +784,9 @@
          */
         public function testPDOSetAttribute() : void
         {
-            $attribute = $this->getBuilder()->getBuilder()
+            $attribute = $this->getBuilder()
                 ->setAttribute([
-                    "ERRMODE" => PDO::ERRMODE_EXCEPTION
+                    "ERRMODE" => "EXCEPTION"
                 ])
                 ->getAttribute("ERRMODE");
 

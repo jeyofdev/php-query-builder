@@ -15,27 +15,27 @@
         /**
          * @var PDO
          */
-        private $pdo;
+        private static $pdo;
 
 
         /**
          * @var Fetch
          */
-        private $fetch;
+        private static $fetch;
 
 
 
         /**
          * @var Execute
          */
-        private $execute;
+        private static $execute;
 
 
 
         /**
          * @var Attribute
          */
-        private $attribute;
+        private static $attribute;
 
 
 
@@ -44,7 +44,7 @@
          *
          * @var string
          */
-        private $query;
+        private static $query;
 
 
 
@@ -53,7 +53,7 @@
          *
          * @var PDOStatement
          */
-        private $statement;
+        private static $statement;
     
 
 
@@ -62,17 +62,7 @@
          *
          * @var mixed
          */
-        private $results;
-
-
-
-        /**
-         * @param PDO $pdo The connection to the database
-         */
-        public function __construct(PDO $pdo)
-        {
-            $this->pdo = $pdo;
-        }
+        private static $results;
 
 
 
@@ -80,15 +70,17 @@
          * Set the value of an attribute
          *
          * @param  array  $attributes
-         * @return self
+         * @return void
          */
-        public function setAttribute (array $attributes = []) : self
+        public static function setAttribute (array $attributes = []) : void
         {
-            $this->attribute = new Attribute($this->pdo);
-            $this->attribute->setAttribute($attributes);
+            if (is_null(self::$attribute)) {
+                self::$attribute = BuilderFactory::addAttribute(self::$pdo);
+            }
 
-            return $this;
+            self::$attribute->setAttribute($attributes);
         }
+
 
 
         /**
@@ -97,10 +89,13 @@
          * @param  string  $attribute
          * @return int
          */
-        public function getAttribute (string $attribute) : int
+        public static function getAttribute (string $attribute) : int
         {
-            $this->attribute = new Attribute($this->pdo);
-            return $this->attribute->getAttribute($attribute);
+            if (is_null(self::$attribute)) {
+                self::$attribute = BuilderFactory::addAttribute(self::$pdo);
+            }
+
+            return self::$attribute->getAttribute($attribute);
         }
 
 
@@ -109,14 +104,12 @@
          * Executes an SQL statement with the PDO::query method
          *
          * @param  string  $query  The sql query
-         * @return self
+         * @return void
          */
-        public function query (string $query) : self
+        public static function query (string $query) : void
         {
-            $this->query = $query;
-            $this->statement = $this->pdo->query($this->query);
-
-            return $this;
+            self::$query = $query;
+            self::$statement = self::$pdo->query(self::$query);
         }
 
 
@@ -125,14 +118,12 @@
          * Executes an SQL statement with the PDO::prepare method
          *
          * @param  string  $query  The sql query
-         * @return self
+         * @return void
          */
-        public function prepare (string $query) : self
+        public static function prepare (string $query) : void
         {
-            $this->query = $query;
-            $this->statement = $this->pdo->prepare($this->query);
-
-            return $this;
+            self::$query = $query;
+            self::$statement = self::$pdo->prepare(self::$query);
         }
 
 
@@ -143,12 +134,12 @@
          * @param  string  $query
          * @return integer
          */
-        public function exec (string $query) : int
+        public static function exec (string $query) : int
         {
-            $this->query = $query;
-            $this->statement = $this->pdo->exec($this->query);
+            self::$query = $query;
+            self::$statement = self::$pdo->exec(self::$query);
 
-            return $this->statement;
+            return self::$statement;
         }
 
 
@@ -157,14 +148,15 @@
          * Executes a prepared statement
          *
          * @param  array  $params  The values ​​of the sql query parameters
-         * @return self
+         * @return void
          */
-        public function execute (array $params = []) : self
+        public static function execute (array $params = []) : void
         {
-            $this->execute = new Execute($this->statement);
-            $this->execute->execute($params);
-
-            return $this;
+            if (is_null(self::$execute)) {
+                self::$execute = BuilderFactory::addExecute(self::$statement);
+            }
+            
+            self::$execute->execute($params);
         }
 
 
@@ -175,12 +167,15 @@
          * @param  string  $fetchMode  The default fetch mode
          * @return mixed
          */
-        public function fetch (string $fetchMode = "FETCH_BOTH")
+        public static function fetch (string $fetchMode = "BOTH")
         {
-            $this->fetch = new Fetch($this->statement);
-            $this->results = $this->fetch->getResults($fetchMode, true);
+            if (is_null(self::$fetch)) {
+                self::$fetch = BuilderFactory::addFetch(self::$statement);
+            }
 
-            return $this->results;
+            self::$results = self::$fetch->getResults($fetchMode, true);
+
+            return self::$results;
         }
 
 
@@ -189,14 +184,19 @@
          * Get all the results of the sql query
          *
          * @param  string  $fetchMode  The default fetch mode
-         * @return mixed
+         * @return array
          */
-        public function fetchAll (string $fetchMode = "FETCH_BOTH")
+        public static function fetchAll (string $fetchMode = "BOTH") : array
         {
-            $this->fetch = new Fetch($this->statement);
-            $this->results = $this->fetch->getResults($fetchMode, false);
+            $fetchMode = strtoupper($fetchMode);
 
-            return $this->results;
+            if (is_null(self::$fetch)) {
+                self::$fetch = BuilderFactory::addFetch(self::$statement);
+            }
+
+            self::$results = self::$fetch->getResults($fetchMode, false);
+
+            return self::$results;
         }
 
 
@@ -206,9 +206,9 @@
          *
          * @return integer
          */
-        public function lastInsertId () : int
+        public static function lastInsertId () : int
         {
-            return (int)$this->pdo->lastInsertId();
+            return (int)self::$pdo->lastInsertId();
         }
 
 
@@ -217,11 +217,11 @@
          * Quotes a string for use in a query
          *
          * @param string $string
-         * @return void
+         * @return string
          */
-        public function quote (string $string)
+        public static function quote (string $string) : string
         {
-            return $this->pdo->quote($string);
+            return self::$pdo->quote($string);
         }
 
 
@@ -231,8 +231,21 @@
          *
          * @return integer
          */
-        public function rowCount () : int
+        public static function rowCount () : int
         {
-            return $this->statement->rowCount();
+            return self::$statement->rowCount();
+        }
+
+
+
+        /**
+         * Définir la connexion PDO dans la propriété pdo
+         *
+         * @param PDO $pdo
+         * @return void
+         */
+        public static function setPdo (PDO $pdo) : void
+        {
+            self::$pdo = $pdo;
         }
     }

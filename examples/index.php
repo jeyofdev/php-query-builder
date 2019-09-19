@@ -15,13 +15,11 @@
 
     // Generate the query
     $query = $queryBuilder
-        ->select()
-        ->table("post")
-        ->toSQL();
-    dump($query);
+    ->delete()
+    ->table("post")
+    ->where("id", 5, "<=")
+    ->toSQL();
 
-
-    $results = $queryBuilder
-        ->query($query)
-        ->fetchAll("FETCH_OBJ");
-    dump($results);
+$results = $queryBuilder
+    ->exec($query);
+dump($results);

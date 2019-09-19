@@ -246,7 +246,6 @@ $query = $queryBuilder
     ->functionSql("sum", "price", "priceTotal")
     ->table("sale")
     ->groupBy("client")
-    ->having("sum", "price", 30, ">")
     ->toSql();
 
 $results = $queryBuilder
@@ -266,6 +265,7 @@ $query = $queryBuilder
     ->functionSql("sum", "price", "priceTotal")
     ->table("sale")
     ->groupBy("client")
+    ->having("sum", "price", 30, ">")
     ->toSql();
 
 $results = $queryBuilder

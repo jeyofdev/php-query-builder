@@ -48,7 +48,7 @@
          * @param  boolean  $unique     Execute a fetch or fetchAll
          * @return mixed
          */
-        public function getResults (string $fetchMode = "FETCH_BOTH", bool $unique = true)
+        public function getResults (string $fetchMode = "BOTH", bool $unique = true)
         {
             $mode = $this->SetFetchMode($fetchMode);
 
@@ -71,13 +71,13 @@
          * @param  string  $fetchMode
          * @return integer
          */
-        public function SetFetchMode (string $fetchMode = "FETCH_BOTH") : int
+        public function SetFetchMode (string $fetchMode = "BOTH") : int
         {
             $property = "ATTRIBUTES_DEFAULT_FETCH_MODE_ALLOWED";
             
             foreach ($this->$property as $value) {
                 if ($value === $fetchMode) {
-                    $fetchMode = constant("PDO::$value");
+                    $fetchMode = constant("PDO::FETCH_$value");
                 }
             }
 

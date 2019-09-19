@@ -167,7 +167,7 @@
          * @param  string  $fetchMode  The default fetch mode
          * @return mixed
          */
-        public static function fetch (string $fetchMode = "FETCH_BOTH")
+        public static function fetch (string $fetchMode = "BOTH")
         {
             if (is_null(self::$fetch)) {
                 self::$fetch = BuilderFactory::addFetch(self::$statement);
@@ -186,8 +186,10 @@
          * @param  string  $fetchMode  The default fetch mode
          * @return array
          */
-        public static function fetchAll (string $fetchMode = "FETCH_BOTH") : array
+        public static function fetchAll (string $fetchMode = "BOTH") : array
         {
+            $fetchMode = strtoupper($fetchMode);
+
             if (is_null(self::$fetch)) {
                 self::$fetch = BuilderFactory::addFetch(self::$statement);
             }

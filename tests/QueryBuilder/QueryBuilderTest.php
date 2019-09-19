@@ -696,7 +696,7 @@
             $results = $this->getBuilder()
                 ->prepare($query)
                 ->execute(["id" => 5])
-                ->fetch("FETCH_OBJ");
+                ->fetch("OBJ");
 
             $this->assertNotEmpty($results);
         }
@@ -719,7 +719,7 @@
             $results = $this->getBuilder()
                 ->prepare($query)
                 ->execute(["id" => 5])
-                ->fetchAll("FETCH_OBJ");
+                ->fetchAll("OBJ");
 
             $this->assertNotEmpty($results);
         }

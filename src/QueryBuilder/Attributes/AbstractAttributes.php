@@ -48,7 +48,7 @@
          * @var array
          */
         protected $ATTRIBUTES_DEFAULT_FETCH_MODE_ALLOWED = [
-            "FETCH_ASSOC", "FETCH_BOTH", "FETCH_CLASS", "FETCH_INTO", "FETCH_LAZY", 
-            "FETCH_NAMED", "FETCH_NUM", "FETCH_OBJ", "FETCH_PROPS_LATE"
+            "ASSOC", "BOTH", "CLASS", "INTO", "LAZY", 
+            "NAMED", "NUM", "OBJ", "PROPS_LATE"
         ];
     }

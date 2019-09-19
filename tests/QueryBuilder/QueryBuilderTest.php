@@ -787,7 +787,7 @@
         {
             $attribute = $this->getBuilder()
                 ->setAttribute([
-                    "ERRMODE" => PDO::ERRMODE_EXCEPTION
+                    "ERRMODE" => "EXCEPTION"
                 ])
                 ->getAttribute("ERRMODE");
 
